@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>KillTracker (Alt1)</title>
+  <style>
+    :root { color-scheme: dark; }
+    body {
+      font-family: system-ui, Segoe UI, Arial, sans-serif;
+      margin: 12px;
+      background: #0b0f14;
+      color: #e7eef7;
+    }
+    .row { display: flex; gap: 10px; flex-wrap: wrap; }
+    .card {
+      border: 1px solid #223044;
+      background: #0f1621;
+      border-radius: 10px;
+      padding: 10px;
+      flex: 1;
+      min-width: 280px;
+    }
+    h1 { font-size: 16px; margin: 0 0 10px; }
+    h2 { font-size: 13px; margin: 0 0 10px; opacity: 0.9; }
+    .muted { opacity: 0.75; font-size: 12px; line-height: 1.35; }
+    button {
+      background: #1b2a3e;
+      border: 1px solid #2b3c54;
+      color: #e7eef7;
+      padding: 8px 10px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    button:hover { filter: brightness(1.1); }
+    button.danger { background: #3a1620; border-color: #5a2232; }
+    button.good { background: #163a25; border-color: #225a37; }
+    input[type="number"] { width: 90px; }
+    .pill {
+      display: inline-block;
+      padding: 2px 8px;
+      border: 1px solid #2b3c54;
+      border-radius: 999px;
+      font-size: 12px;
+      opacity: 0.9;
+    }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { border-bottom: 1px solid #223044; padding: 6px 4px; font-size: 12px; }
+    th { text-align: left; opacity: 0.85; }
+    .ok { color: #8fffba; }
+    .no { color: #ff9aa9; }
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+    textarea {
+      width: 100%;
+      min-height: 120px;
+      background: #0b0f14;
+      color: #e7eef7;
+      border: 1px solid #223044;
+      border-radius: 10px;
+      padding: 10px;
+      resize: vertical;
+    }
+  </style>
+</head>
+<body>
+  <h1>KillTracker (Alt1) 🗡️📦</h1>
+
+  <div class="row">
+    <div class="card">
+      <h2>Status</h2>
+      <div id="status" class="muted">Loading…</div>
+      <div style="margin-top:10px" class="row">
+        <button id="btnStart" class="good">Start</button>
+        <button id="btnStop">Stop</button>
+        <button id="btnClear" class="danger">Clear all data</button>
+      </div>
+      <div style="margin-top:10px" class="muted">
+        Tip: If chat reading doesn’t work, check Alt1 capture settings and make sure the game chatbox is visible. :contentReference[oaicite:1]{index=1}
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Last detected</h2>
+      <div class="muted">
+        Boss: <span id="lastBoss" class="pill mono">—</span><br/>
+        Mode: <span id="lastMode" class="pill mono">—</span><br/>
+        KC: <span id="lastKC" class="pill mono">—</span><br/>
+        Pet: <span id="lastPet" class="pill mono">—</span>
+      </div>
+
+      <div style="margin-top:10px" class="row">
+        <button id="btnExport">Download .txt export</button>
+        <button id="btnCopy">Copy export</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="row" style="margin-top:10px">
+    <div class="card">
+      <h2>Tracked bosses</h2>
+      <div class="muted" style="margin-bottom:8px">
+        Stored locally in this Alt1 browser (localStorage).
+      </div>
+      <div id="tableWrap"></div>
+    </div>
+
+    <div class="card">
+      <h2>Debug (recent lines)</h2>
+      <div class="muted" style="margin-bottom:6px">
+        Shows the last few chat lines the app received.
+      </div>
+      <textarea id="debug" readonly class="mono"></textarea>
+    </div>
+  </div>
+
+  <!-- App config is fetched by app.js -->
+  <script src="./app.js"></script>
+</body>
+</html>
