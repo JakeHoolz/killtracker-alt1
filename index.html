@@ -3,6 +3,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <!-- Allow Cloudflare Insights beacon injected by hosting while keeping everything else self-scoped -->
+  <meta http-equiv="Content-Security-Policy" content="script-src 'self' https://static.cloudflareinsights.com"> 
   <title>KillTracker (Alt1)</title>
   <!-- Local Alt1 libraries to satisfy CSP script-src 'self' -->
   <script src="./vendor/alt1/base.js"></script>
