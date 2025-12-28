@@ -46,7 +46,7 @@ CHAT_W_RATIO    = 0.31    # ~30% of screen width
 CHAT_H_RATIO    = 0.175    # ~28% of screen height
 
 # OCR tuning
-OCR_PSM = 6  # block of text
+OCR_PSM = 7  # single text line
 THRESHOLD = 165  # binary threshold for chat text
 
 # De-dupe behavior: ignore identical normalized lines seen recently
@@ -460,12 +460,12 @@ def preprocess_for_ocr(rgb: np.ndarray) -> np.ndarray:
     # Light blur to smooth UI text
     gray = cv2.GaussianBlur(gray, (3, 3), 0)
 
-    # Adaptive threshold (RS3-safe)
+    # Adaptive threshold tuned for dark RS3 chat background; invert so text = white
     thr = cv2.adaptiveThreshold(
         gray,
         255,
         cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
-        cv2.THRESH_BINARY,
+        cv2.THRESH_BINARY_INV,
         31,
         9
     )
@@ -476,6 +476,40 @@ def preprocess_for_ocr(rgb: np.ndarray) -> np.ndarray:
 def ocr_image(img: np.ndarray) -> str:
     cfg = f"--psm {OCR_PSM} -c tessedit_char_whitelist=ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789:,.+-'()"
     return pytesseract.image_to_string(img, config=cfg)
+
+
+def segment_lines(binary_img: np.ndarray) -> List[np.ndarray]:
+    """Split a binary chat image into individual line images."""
+    # Treat any white pixel as text signal (because preprocess produced white text on black)
+    text_presence = (binary_img > 0).sum(axis=1)
+    if not text_presence.any():
+        return []
+
+    threshold = binary_img.shape[1] * 0.01  # at least 1% of row has text
+    lines: List[np.ndarray] = []
+
+    in_line = False
+    start = 0
+    for idx, val in enumerate(text_presence):
+        has_text = val > threshold
+        if has_text and not in_line:
+            start = idx
+            in_line = True
+        elif not has_text and in_line:
+            end = idx
+            in_line = False
+            if end - start >= 8:  # ignore tiny noise bands
+                pad_top = max(0, start - 2)
+                pad_bot = min(binary_img.shape[0], end + 2)
+                lines.append(binary_img[pad_top:pad_bot, :])
+
+    if in_line:
+        end = binary_img.shape[0]
+        if end - start >= 8:
+            pad_top = max(0, start - 2)
+            lines.append(binary_img[pad_top:end, :])
+
+    return lines
 
 
 # ============================================================
@@ -612,23 +646,17 @@ def main():
         grabbed = sct.grab(region)
         img = np.array(Image.frombytes("RGB", grabbed.size, grabbed.rgb))  # RGB
         pre = preprocess_for_ocr(img)
-        cv2.imwrite("DEBUG_preprocessed.png", pre)
 
+        # Keep the debug output in the Tesseract-friendly black-on-white style
+        pre_for_ocr = cv2.bitwise_not(pre)
+        cv2.imwrite("DEBUG_preprocessed.png", pre_for_ocr)
 
-        # Split into horizontal slices (each chat line)
-        h = pre.shape[0]
-        line_height = int(h / 6)  # RS chat usually ~7–9 visible lines
-
+        # Split into individual text lines using projection instead of fixed slices
         lines = []
-        for i in range(0, h, line_height):
-            slice_img = pre[i:i+line_height, :]
-            if slice_img.shape[0] < 10:
-                continue
-
-            text = ocr_image(slice_img).strip()
-            if len(text) >= 6:
+        for line_img in segment_lines(pre):
+            text = ocr_image(cv2.bitwise_not(line_img)).strip()
+            if len(text) >= 4:
                 lines.append(text)
-
 
         # Clean out old seen entries
         now = time.time()
