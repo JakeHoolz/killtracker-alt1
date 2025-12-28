@@ -92,6 +92,7 @@ let running = false;
 let timer = null;
 let seen = new Set();
 let debugLines = [];
+let chatReader = null;
 
 // ---------- Utilities ----------
 
@@ -207,6 +208,49 @@ function isAlt1() {
   return typeof window.alt1 !== "undefined";
 }
 
+function getChatReader() {
+  if (chatReader) return chatReader;
+  if (!window.a1lib || typeof a1lib.ChatboxReader !== "function") return null;
+
+  chatReader = new a1lib.ChatboxReader();
+  chatReader.readargs = {
+    colors: [
+      a1lib.mixColor(255, 255, 255), // white
+      a1lib.mixColor(0, 255, 255),   // cyan
+      a1lib.mixColor(0, 255, 0),     // green
+      a1lib.mixColor(255, 255, 0),   // yellow
+      a1lib.mixColor(255, 127, 0),   // orange
+      a1lib.mixColor(127, 169, 255)  // pm blue
+    ],
+    backwards: true
+  };
+
+  return chatReader;
+}
+
+function findChatBox(reader) {
+  try {
+    const img = a1lib.captureHoldFullRs();
+    const locs = reader.find(img);
+    if (Array.isArray(locs) && locs.length > 0) {
+      reader.pos = locs[0];
+      try {
+        alt1.overLayRect(
+          a1lib.mixColor(255, 0, 255),
+          reader.pos.x,
+          reader.pos.y,
+          reader.pos.width,
+          reader.pos.height,
+          2000,
+          2
+        );
+      } catch {}
+      return true;
+    }
+  } catch {}
+  return false;
+}
+
 function readChatLines() {
   if (!isAlt1()) return { ok: false, note: "Not running inside Alt1.", lines: [] };
 
@@ -217,7 +261,21 @@ function readChatLines() {
     }
   } catch {}
 
-  return { ok: false, note: "Chat API unavailable.", lines: [] };
+  const reader = getChatReader();
+  if (!reader) return { ok: false, note: "Chat reader unavailable.", lines: [] };
+
+  if (!reader.pos && !findChatBox(reader)) {
+    return { ok: false, note: "Chat box not found yet (move chat box).", lines: [] };
+  }
+
+  try {
+    const res = reader.read();
+    const msgs = Array.isArray(res) ? res : [];
+    return { ok: true, note: "ChatboxReader OCR", lines: msgs };
+  } catch (err) {
+    console.error("ChatboxReader failed", err);
+    return { ok: false, note: "Chat OCR failed.", lines: [] };
+  }
 }
 
 function extractText(line) {
