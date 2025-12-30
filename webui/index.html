@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>RS3 Boss Overlay</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <link rel="stylesheet" href="style.css" />
+  <script defer src="overlay.js"></script>
+</head>
+<body>
+  <div id="overlay-container">
+
+    <!-- HEADER -->
+    <div id="boss-header">
+      <img id="boss-image" src="" alt="Boss" />
+      <div id="boss-info">
+        <h1 id="boss-name">Loading...</h1>
+      </div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main-content">
+
+      <!-- STATS -->
+      <div id="stats-panel">
+
+        <div class="stat-row">
+          <span class="label">Total KC</span>
+          <span id="stat-total-kc" class="stat-value">—</span>
+        </div>
+
+        <div class="stat-row stat-sub">
+          <span class="label">Normal Mode</span>
+          <span id="stat-nm-kc" class="stat-value">—</span>
+        </div>
+
+        <div class="stat-row stat-sub">
+          <span class="label">Hard Mode</span>
+          <span id="stat-hm-kc" class="stat-value">—</span>
+        </div>
+
+        <div class="stat-row">
+          <span class="label">Session KC</span>
+          <span id="stat-session-kc" class="stat-value">—</span>
+        </div>
+
+        <div class="stat-row">
+          <span class="label">Pet KC</span>
+          <span id="stat-pet" class="stat-value">—</span>
+        </div>
+
+        <div class="stat-row">
+          <span class="label">Since Pet</span>
+          <span id="stat-since-pet" class="stat-value">—</span>
+        </div>
+
+        <div class="stat-row">
+          <span class="label">Log Progress</span>
+          <span id="stat-log" class="stat-value">—</span>
+        </div>
+
+        <div class="stat-row">
+          <span class="label">Total Uniques</span>
+          <span id="stat-uniques" class="stat-value">—</span>
+        </div>
+
+        <div class="stat-row">
+          <span class="label">Dry Streak</span>
+          <span id="stat-dry" class="stat-value">—</span>
+        </div>
+
+        <!-- CLUES -->
+        <div id="clues-row"></div>
+      </div>
+
+      <!-- COLLECTION LOG -->
+      <div id="log-panel">
+        <div id="collection-log"></div>
+      </div>
+
+    </div>
+
+    <!-- LATEST UNIQUE -->
+    <div id="latest-unique-panel">
+      <div class="stat-row">
+        <span class="label">Latest Unique</span>
+        <img id="latest-unique-icon" />
+        <span id="stat-latest" class="stat-value">—</span>
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>

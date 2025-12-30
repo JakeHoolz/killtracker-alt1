@@ -1,0 +1,12 @@
+===== KC 893 SUMMARY =====
+Boss   : Kalphite Queen
+Mode   : Normal
+Result : UNIQUE DROP
+
+Drops (1):
+  • shark                    [UNIQUE]
+
+Collection Progress:
+  4 / 9 uniques collected
+=========================
+

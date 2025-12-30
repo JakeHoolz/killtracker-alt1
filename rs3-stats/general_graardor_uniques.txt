@@ -1,0 +1,50 @@
+1|bandos tassets
+2|bandos hilt
+3|godsword shard 2
+4|godsword shard 3
+5|warpriest of bandos helm
+6|warpriest of bandos cape
+7|warpriest of bandos cuirass
+8|warpriest of bandos greaves
+9|warpriest of bandos gauntlets
+10|warpriest of bandos boots
+11|the glory of general graardor
+376|godsword shard 3
+377|bandos warshield
+389|bandos boots
+410|bandos tassets
+417|bandos boots
+438|godsword shard 2
+453|bandos boots
+535|godsword shard 2
+571|bandos boots
+620|godsword shard 1
+646|bandos helmet
+663|godsword shard 2
+721|bandos warshield
+782|bandos helmet
+845|bandos hilt
+858|bandos warshield
+859|godsword shard 3
+891|godsword shard 3
+896|bandos chestplate
+927|bandos chestplate
+952|bandos hilt
+977|bandos gloves
+1081|godsword shard 3
+1270|bandos chestplate
+1344|bandos gloves
+1363|bandos warshield
+1464|godsword shard 2
+1485|bandos boots
+1489|bandos warshield
+1556|bandos hilt
+1557|godsword shard 3
+1606|bandos hilt
+1737|bandos hilt
+1738|godsword shard 2
+1754|bandos boots
+1755|godsword shard 2
+1772|bandos tassets
+1788|godsword shard 2
+1796|bandos tassets

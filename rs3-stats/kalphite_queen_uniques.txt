@@ -1,0 +1,27 @@
+1|dragon chainbody
+2|dragon chainbody
+3|dragon chainbody
+4|dragon 2h sword
+5|dragon 2h sword
+6|dragon 2h sword
+7|dragon 2h sword
+8|dragon 2h sword
+9|dragon 2h sword
+10|dragon 2h sword
+11|kalphite queen head
+12|kalphite queen head
+300|kalphite queen head
+414|kalphite queen head
+415|dragon 2h sword
+445|kalphite queen head
+568|dragon chainbody
+596|dragon chainbody
+645|dragon 2h sword
+760|kalphite queen head
+764|dragon chainbody
+803|dragon chainbody
+818|dragon chainbody
+835|dragon chainbody
+849|dragon 2h sword
+855|dragon 2h sword
+934|kalphite egg

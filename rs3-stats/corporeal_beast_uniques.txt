@@ -1,0 +1,9 @@
+1|spirit shield
+2|spirit shield
+3|spirit shield
+4|spirit shield
+5|holy elixir
+6|holy elixir
+7|holy elixir
+644|holy elixir
+

@@ -1,0 +1,67 @@
+1|linza's helm
+2|ahrim's hood
+2|ahrim's hood
+3|ahrim's robe top
+4|ahrim's robe skirt
+4|ahrim's robe skirt
+4|ahrim's robe skirt
+4|ahrim's robe skirt
+4|ahrim's robe skirt
+5|ahrim's staff
+5|ahrim's staff
+5|ahrim's staff
+5|ahrim's staff
+5|ahrim's staff
+5|ahrim's staff
+6|ahrim's wand
+6|ahrim's wand
+7|ahrim's book of magic
+8|dharok's helm
+8|dharok's helm
+9|dharok's platebody
+9|dharok's platebody
+9|dharok's platebody
+10|dharok's platelegs
+10|dharok's platelegs
+11|dharok's greataxe
+11|dharok's greataxe
+11|dharok's greataxe
+11|dharok's greataxe
+11|dharok's greataxe
+12|torag's helm
+12|torag's helm
+13|torag's platebody
+13|torag's platebody
+13|torag's platebody
+14|torag's platelegs
+14|torag's platelegs
+15|torag's hammer
+15|torag's hammer
+15|torag's hammer
+16|verac's helm
+17|verac's plateskirt
+18|verac's flail
+19|guthan's platebody
+19|guthan's platebody
+19|guthan's platebody
+20|guthan's chainskirt
+21|guthan's warspear
+21|guthan's warspear
+21|guthan's warspear
+21|guthan's warspear
+22|karil's coif
+23|karil's top
+24|karil's skirt
+25|karil's crossbow
+25|karil's crossbow
+26|karil's pistol crossbow
+27|karil's off-hand pistol crossbow
+27|karil's off-hand pistol crossbow
+28|corruption sigil
+29|amulet of the forsaken
+29|amulet of the forsaken
+29|amulet of the forsaken
+29|amulet of the forsaken
+29|amulet of the forsaken
+29|amulet of the forsaken
+29|amulet of the forsaken

@@ -1,0 +1,154 @@
+{
+  "boss": {
+    "name": "General Graardor",
+    "mode": "NM",
+    "image": "images/general_graardor/general_graardor.png"
+  },
+  "stats": {
+    "total_kc": 1846,
+    "nm_kc": 1827,
+    "hm_kc": 19,
+    "session_kc": 78,
+    "pet": false,
+    "since_pet": 0,
+    "log_progress": {
+      "obtained": 17,
+      "total": 18
+    },
+    "clues": {
+      "easy": {
+        "image": "images/clues/sealed_clue_scroll_easy.png",
+        "count": 0
+      },
+      "medium": {
+        "image": "images/clues/sealed_clue_scroll_medium.png",
+        "count": 0
+      },
+      "hard": {
+        "image": "images/clues/sealed_clue_scroll_hard.png",
+        "count": 51
+      },
+      "elite": {
+        "image": "images/clues/sealed_clue_scroll_elite.png",
+        "count": 13
+      },
+      "master": {
+        "image": "images/clues/sealed_clue_scroll_master.png",
+        "count": 2
+      }
+    },
+    "total_uniques": 50,
+    "dry_streak": 50,
+    "latest_unique": "bandos tassets"
+  },
+  "collection_log": [
+    {
+      "name": "bandos_helmet",
+      "obtained": true,
+      "count": 2,
+      "image": "images/general_graardor/bandos_helmet.png"
+    },
+    {
+      "name": "bandos_chestplate",
+      "obtained": true,
+      "count": 3,
+      "image": "images/general_graardor/bandos_chestplate.png"
+    },
+    {
+      "name": "bandos_tassets",
+      "obtained": true,
+      "count": 4,
+      "image": "images/general_graardor/bandos_tassets.png"
+    },
+    {
+      "name": "bandos_gloves",
+      "obtained": true,
+      "count": 2,
+      "image": "images/general_graardor/bandos_gloves.png"
+    },
+    {
+      "name": "bandos_boots",
+      "obtained": true,
+      "count": 6,
+      "image": "images/general_graardor/bandos_boots.png"
+    },
+    {
+      "name": "bandos_hilt",
+      "obtained": true,
+      "count": 6,
+      "image": "images/general_graardor/bandos_hilt.png"
+    },
+    {
+      "name": "godsword_shard_1",
+      "obtained": true,
+      "count": 1,
+      "image": "images/general_graardor/godsword_shard_1.png"
+    },
+    {
+      "name": "godsword_shard_2",
+      "obtained": true,
+      "count": 8,
+      "image": "images/general_graardor/godsword_shard_2.png"
+    },
+    {
+      "name": "godsword_shard_3",
+      "obtained": true,
+      "count": 6,
+      "image": "images/general_graardor/godsword_shard_3.png"
+    },
+    {
+      "name": "bandos_warshield",
+      "obtained": true,
+      "count": 5,
+      "image": "images/general_graardor/bandos_warshield.png"
+    },
+    {
+      "name": "warpriest_of_bandos_helm",
+      "obtained": true,
+      "count": 1,
+      "image": "images/general_graardor/warpriest_of_bandos_helm.png"
+    },
+    {
+      "name": "warpriest_of_bandos_cuirass",
+      "obtained": true,
+      "count": 1,
+      "image": "images/general_graardor/warpriest_of_bandos_cuirass.png"
+    },
+    {
+      "name": "warpriest_of_bandos_greaves",
+      "obtained": true,
+      "count": 1,
+      "image": "images/general_graardor/warpriest_of_bandos_greaves.png"
+    },
+    {
+      "name": "warpriest_of_bandos_gauntlets",
+      "obtained": true,
+      "count": 1,
+      "image": "images/general_graardor/warpriest_of_bandos_gauntlets.png"
+    },
+    {
+      "name": "warpriest_of_bandos_boots",
+      "obtained": true,
+      "count": 1,
+      "image": "images/general_graardor/warpriest_of_bandos_boots.png"
+    },
+    {
+      "name": "warpriest_of_bandos_cape",
+      "obtained": true,
+      "count": 1,
+      "image": "images/general_graardor/warpriest_of_bandos_cape.png"
+    },
+    {
+      "name": "the_glory_of_general_graardor",
+      "obtained": true,
+      "count": 1,
+      "image": "images/general_graardor/the_glory_of_general_graardor.png"
+    },
+    {
+      "name": "decaying_tooth",
+      "obtained": false,
+      "count": 0,
+      "image": "images/general_graardor/decaying_tooth.png"
+    }
+  ]
+}

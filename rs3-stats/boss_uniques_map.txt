@@ -1,0 +1,335 @@
+# Boss uniques mapping
+# Boss names must be NORMALIZED (lowercase, spaces only)
+
+amascut the devourer:
+devourer's guard
+tumeken's light
+mask of tumeken's resplendence
+robe top of tumeken's resplendence
+robe bottom of tumeken's resplendence
+gloves of tumeken's resplendence
+boots of tumeken's resplendence
+shard of genesis essence
+the devourer's nexus (unattuned)
+memoirs of the devourer
+amascut's promise
+
+araxxor:
+spider leg top
+spider leg middle
+spider leg bottom
+araxxi's fang
+araxxi's web
+araxxi's eye
+araxyte pet
+araxyte egg
+araxyte spider egg (unchecked)
+
+
+arch glacor:
+glacor remnants
+dark nilas
+frozen core of leng
+leng artifact
+scripture of wen
+
+the barrows brothers:
+linza's helm
+linza's cuirass
+linza's greaves
+linza's hammer
+linza's shield
+ahrim's hood
+ahrim's robe top
+ahrim's robe skirt
+ahrim's staff
+ahrim's wand
+ahrim's book of magic
+dharok's helm
+dharok's platebody
+dharok's platelegs
+dharok's greataxe
+torag's helm
+torag's platebody
+torag's platelegs
+torag's hammer
+verac's helm
+verac's brassard
+verac's plateskirt
+verac's flail
+guthan's helm
+guthan's platebody
+guthan's chainskirt
+guthan's warspear
+karil's coif
+karil's top
+karil's skirt
+karil's crossbow
+karil's pistol crossbow
+karil's off-hand pistol crossbow
+akrisae's hood
+akrisae's robe top
+akrisae's robe skirt
+akrisae's war mace
+corruption sigil
+amulet of the forsaken
+
+chaos elemental:
+corrupt dragon battleaxe
+corrupt dragon dagger
+corrupt dragon longsword
+corrupt dragon mace
+corrupt dragon scimitar
+corrupt dragon spear
+corrupt dragon chainbody
+corrupt dragon helm
+corrupt dragon platelegs
+corrupt dragon plateskirt
+corrupt dragon sq shield
+statius's warhammer
+vesta's longsword
+vesta's spear
+zuriel's staff
+morrigan's javelin
+morrigan's throwing axe
+statius's full helm
+statius's platebody
+statius's platelegs
+vesta's chainbody
+vesta's plateskirt
+zuriel's hood
+zuriel's robe top
+zuriel's robe bottom
+morrigan's coif
+morrigan's leather body
+morrigan's leather chaps
+corrupt statius's warhammer
+corrupt vesta's longsword
+corrupt vesta's spear
+corrupt zuriel's staff
+corrupt morrigan's javelin
+corrupt morrigan's throwing axe
+corrupt statius's full helm
+corrupt statius's platebody
+corrupt statius's platelegs
+corrupt vesta's chainbody
+corrupt vesta's plateskirt
+corrupt zuriel's hood
+corrupt zuriel's robe top
+corrupt zuriel's robe bottom
+corrupt morrigan's coif
+corrupt morrigan's leather body
+corrupt morrigan's leather chaps
+ribs of chaos
+
+commander zilyana:
+saradomin sword
+armadyl crossbow
+off-hand armadyl crossbow
+saradomin's murmur
+saradomin's hiss
+saradomin's whisper
+saradomin hilt
+godsword shard 1
+godsword shard 2
+godsword shard 3
+warpriest of saradomin helm
+warpriest of saradomin cuirass
+warpriest of saradomin greaves
+warpriest of saradomin gauntlets
+warpriest of saradomin boots
+warpriest of saradomin cape
+zilyana's notes
+auburn lock
+
+
+corporeal beast:
+elysian sigil
+divine sigil
+arcane sigil
+spectral sigil
+spirit shield
+holy elixir
+corporeal bone
+
+flesh hatcher mhekarnahz:
+dragon harpoon
+stalker's charm
+mhekarnahz's eye
+
+general graardor:
+bandos helmet
+bandos chestplate
+bandos tassets
+bandos gloves
+bandos boots
+bandos hilt
+godsword shard 1
+godsword shard 2
+godsword shard 3
+bandos warshield
+warpriest of bandos helm
+warpriest of bandos cuirass
+warpriest of bandos greaves
+warpriest of bandos gauntlets
+warpriest of bandos boots
+warpriest of bandos cape
+the glory of general graardor
+decaying tooth
+
+giant mole:
+dragon 2h sword
+clingy mole
+rotten fang
+
+helwyr:
+crest of seren
+dormant anima core helm
+dormant anima core body
+dormant anima core legs
+serenic essence
+wand of cywir elders
+orb of the cywir elders
+twisted antler
+
+hermond the spirit of war:
+hermodic plate
+animated drumsticks
+hermod's armour spike
+
+kalphite king:
+drygore longsword
+off-hand drygore longsword
+drygore mace
+off-hand drygore mace
+drygore rapier
+off-hand drygore rapier
+perect shitin
+kalphite claw
+
+kalphite queen:
+dragon chainbody
+dragon 2h sword
+kalphite queen head
+kalphite egg
+
+kerapac the bound:
+fractured armadyl symbol
+fractured stabilisation gem
+staff of armadyl's fractured shaft
+kerapac's wrist wraps
+greater concentrated blast ability codex
+scripture of jas
+kerapac's mask piece
+
+king black dragon:
+dragon rider gloves
+dragon rider boots
+draconic visage
+king black dragon head
+last riders
+dragon kite ornament kit (or)
+dragon kite ornament kit (sp)
+king black dragon scale
+
+kreearra:
+armadyl helmet
+armadyl chestplate
+armadyl chainskirt
+armadyl gloves
+armadyl boots
+armadyl buckler
+armadyl hilt
+godsword shard 1
+godsword shard 2
+godsword shard 3
+warpriest of armadyl helm
+warpriest of armadyl cuirass
+warpriest of armadyl greaves
+warpriest of armadyl gauntlets
+warpriest of armadyl boots
+warpriest of armadyl cape
+armadyl's assault
+giant feather
+
+kril tsutsaroth:
+hood of subjugation
+garb of subjugation
+gown of subjugation
+gloves of subjugation
+boots of subjugation
+zamorak hilt
+godsword shard 1
+godsword shard 2
+godsword shard 3
+zamorakian spear
+steam battlestaff
+ward of subjugation
+warpriest of zamorak helm
+warpriest of zamorak cape
+warpriest of zamorak cuirass
+warpriest of zamorak greaves
+warpriest of zamorak gauntlets
+warpriest of zamorak boots
+razulei's tale
+severed hoof
+
+the magister:
+phylactery
+gloves of passage
+the magister's journal #1
+the magister's journal #2
+the magister's journal #3
+the magister's journal #4
+the magister's journal #5
+soul fragment (the magister)
+
+nex:
+torva full helm
+torva platebody
+torva platelegs
+torva boots
+torva gloves
+pernix cowl
+pernix body
+pernix chaps
+pernix boots
+pernix gloves
+virtus mask
+virtus robe top
+virtus robe legs
+virtus boots
+virtus gloves
+virtus wand
+virtus book
+zaryte bow
+ancient emblem
+nex's followers
+blood-soaked feather
+
+queen black dragon:
+first dragonkin journal
+second dragonkin journal
+third dragonkin journal
+fourth dragonkin journal
+royal torsion spring
+royal sight
+royal frame
+royal bolt stabiliser
+dragonbone upgrade kit
+dragon kiteshield
+queen black dragon scale
+draconic visage
+
+tztok jad:
+fire cape
+
+rex matriarch osseous:
+savage spear tip
+savage spear shaft
+savage spear cap
+savage plume
+heart of the berserker
+calcified heart
+jail cell key
+occultist's ring

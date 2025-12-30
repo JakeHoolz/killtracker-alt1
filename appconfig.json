@@ -1,0 +1,17 @@
+{
+  "appName": "Amascut Helper",
+  "description": "Helps with mechanics of Amascut. Plugin by Saltea, credit to Ellam + Duk.",
+  "appUrl": "./index.html",
+  "version": "1.0.9",
+  "configUrl": "./appconfig.json",
+  "iconUrl": "./src/icon.png",
+  "defaultWidth": 120,
+  "defaultHeight": 90,
+  "minWidth": 40,
+  "minHeight": 40,
+  "maxWidth": 1000,
+  "maxHeight": 1000,
+  "requestHandlers": [],
+  "activators": [],
+  "permissions": "pixel,gamestate,overlay"
+}

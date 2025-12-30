@@ -1,0 +1,8 @@
+# boss pets (kc obtained)
+
+arch glacor: 2400
+chaos elemental: 602
+flesh hatcher mhekarnahz: 689
+giant mole: 579
+kalphite queen: 934
+king black dragon: 2455
