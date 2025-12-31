@@ -14,33 +14,48 @@
   <link rel="stylesheet" href="./src/css/style.css" />
 </head>
 <body class="nis">
-  <div id="app">
-    <div id="header">
-      <img id="boss-image" alt="Boss" />
-      <div id="header-text">
-        <div id="boss-name">Waiting for boss...</div>
-        <div id="boss-mode">--</div>
+  <div id="app" class="panel">
+    <div class="panel-header">
+      <div class="boss-block">
+        <img id="boss-image" class="boss-image" alt="Boss" />
+        <div class="boss-text">
+          <div id="boss-name" class="boss-name">Waiting for boss...</div>
+        </div>
+      </div>
+      <div class="session-stats">
+        <div class="stat-line"><span class="label">Session KC:</span><span class="value" id="stat-session">—</span></div>
+        <div class="stat-line"><span class="label">Pet KC:</span><span class="value" id="stat-pet">—</span></div>
+        <div class="stat-line"><span class="label">Since Pet:</span><span class="value" id="stat-since-pet">—</span></div>
       </div>
     </div>
 
-    <div id="stats">
-      <div class="stat"><span class="label">Total KC</span><span id="stat-total">—</span></div>
-      <div class="stat sub"><span class="label">Normal</span><span id="stat-nm">—</span></div>
-      <div class="stat sub"><span class="label">Hard</span><span id="stat-hm">—</span></div>
-      <div class="stat"><span class="label">Session</span><span id="stat-session">—</span></div>
-      <div class="stat"><span class="label">Pet KC</span><span id="stat-pet">—</span></div>
-      <div class="stat"><span class="label">Since Pet</span><span id="stat-since-pet">—</span></div>
-      <div class="stat"><span class="label">Log</span><span id="stat-log">—</span></div>
-      <div class="stat"><span class="label">Uniques</span><span id="stat-uniques">—</span></div>
-      <div class="stat"><span class="label">Dry Streak</span><span id="stat-dry">—</span></div>
-      <div class="stat"><span class="label">Latest</span><span id="stat-latest">—</span></div>
+    <div class="panel-body">
+      <div class="stat-column">
+        <div class="stat-line"><span class="label">Total KC:</span><span class="value" id="stat-total">—</span></div>
+        <div class="stat-line"><span class="label">Normal Mode:</span><span class="value" id="stat-nm">—</span></div>
+        <div class="stat-line"><span class="label">Hard Mode:</span><span class="value" id="stat-hm">—</span></div>
+        <div class="stat-line"><span class="label">Session KC:</span><span class="value" id="stat-session-inline">—</span></div>
+        <div class="stat-line"><span class="label">Pet KC:</span><span class="value" id="stat-pet-inline">—</span></div>
+        <div class="stat-line"><span class="label">Since Pet:</span><span class="value" id="stat-since-pet-inline">—</span></div>
+      </div>
+
+      <div class="collection-section">
+        <div class="collection-meta">
+          <div class="stat-line compact"><span class="label">Collection log:</span><span class="value" id="stat-log">—</span></div>
+          <div class="stat-line compact"><span class="label">Total Uniques:</span><span class="value" id="stat-uniques">—</span></div>
+          <div class="stat-line compact"><span class="label">Dry Streak:</span><span class="value" id="stat-dry">—</span></div>
+        </div>
+        <div id="collection-log" class="collection-grid"></div>
+      </div>
     </div>
 
-    <div id="clues"></div>
+    <div class="latest-row">
+      <span class="label">Latest Unique:</span>
+      <div id="latest-unique-text" class="value">—</div>
+      <div id="latest-unique-icons" class="latest-icons"></div>
+    </div>
 
-    <div id="collection-log"></div>
-
-    <div id="output"></div>
+    <div id="output" class="console"></div>
   </div>
 
   <script src="./src/script.js"></script>
