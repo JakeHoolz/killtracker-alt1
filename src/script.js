@@ -226,30 +226,43 @@ function updateUI() {
   const bossNorm = normalizePath(state.lastBossName || "");
   const bossImg = document.getElementById("boss-image");
   bossImg.src = state.lastBossName ? `./webui/images/${bossNorm}/${bossNorm}.png` : "";
-  document.getElementById("boss-name").textContent = bossName;
-  document.getElementById("boss-mode").textContent = state.lastBossMode || "--";
+  const mode = state.lastBossMode ? ` (${state.lastBossMode})` : "";
+  const bossTitle = document.getElementById("boss-name");
+  if (bossTitle) bossTitle.textContent = `${bossName}${mode}`.trim();
 
   document.getElementById("stat-total").textContent = state.lastKillCount.toLocaleString();
   document.getElementById("stat-nm").textContent = state.lastNMKC.toLocaleString();
   document.getElementById("stat-hm").textContent = state.lastHMKC.toLocaleString();
-  document.getElementById("stat-session").textContent = getSessionKC().toLocaleString();
+
+  const sessionKC = getSessionKC().toLocaleString();
+  document.getElementById("stat-session").textContent = sessionKC;
+  const sessionInline = document.getElementById("stat-session-inline");
+  if (sessionInline) sessionInline.textContent = sessionKC;
 
   const petKey = normalizeBoss(state.lastBossName);
   const petKC = state.petKC.get(petKey);
-  document.getElementById("stat-pet").textContent = petKC != null ? petKC.toLocaleString() : "—";
-  document.getElementById("stat-since-pet").textContent = petKC != null ? killsSincePet().toLocaleString() : "—";
+  const petText = petKC != null ? petKC.toLocaleString() : "—";
+  document.getElementById("stat-pet").textContent = petText;
+  const petInline = document.getElementById("stat-pet-inline");
+  if (petInline) petInline.textContent = petText;
+
+  const sincePetText = petKC != null ? killsSincePet().toLocaleString() : "—";
+  document.getElementById("stat-since-pet").textContent = sincePetText;
+  const sincePetInline = document.getElementById("stat-since-pet-inline");
+  if (sincePetInline) sincePetInline.textContent = sincePetText;
 
   document.getElementById("stat-log").textContent = `${distinctUniquesCount()}/${totalUniquesForBoss()}`;
   document.getElementById("stat-uniques").textContent = totalUniqueDrops().toLocaleString();
   document.getElementById("stat-dry").textContent = killsSinceLastUnique().toLocaleString();
-  document.getElementById("stat-latest").textContent = state.latestUnique?.item || "—";
 
+  updateLatestUnique();
   renderClues();
   renderCollectionLog();
 }
 
 function renderClues() {
   const container = document.getElementById("clues");
+  if (!container) return;
   container.innerHTML = "";
   const tiers = ["easy", "medium", "hard", "elite", "master"];
   tiers.forEach((tier) => {
@@ -263,6 +276,7 @@ function renderClues() {
 
 function renderCollectionLog() {
   const container = document.getElementById("collection-log");
+  if (!container) return;
   container.innerHTML = "";
   const key = normalizeBoss(state.lastBossName);
   const uniques = state.bossUniques[key];
@@ -279,10 +293,41 @@ function renderCollectionLog() {
     const obtained = count > 0;
     const itemNorm = normalizePath(item);
     const div = document.createElement("div");
-    div.className = "log-item" + (obtained ? " obtained" : "");
-    div.innerHTML = `<img src="./webui/images/${normalizePath(state.lastBossName || "")}/${itemNorm}.png" alt="${item}"><div>${item}</div><div class="log-count">x${count}</div>`;
+    div.className = "log-slot" + (obtained ? " obtained" : " missing");
+
+    const img = document.createElement("img");
+    img.src = `./webui/images/${normalizePath(state.lastBossName || "")}/${itemNorm}.png`;
+    img.alt = item;
+
+    const countEl = document.createElement("div");
+    countEl.className = "log-count" + (obtained ? "" : " missing");
+    countEl.textContent = count.toLocaleString();
+
+    div.appendChild(img);
+    div.appendChild(countEl);
     container.appendChild(div);
   });
+}
+
+function updateLatestUnique() {
+  const latestText = document.getElementById("latest-unique-text");
+  const icons = document.getElementById("latest-unique-icons");
+  if (!latestText || !icons) return;
+
+  const latestItem = state.latestUnique?.item;
+  latestText.textContent = latestItem || "—";
+  icons.innerHTML = "";
+
+  if (!latestItem) return;
+
+  const slot = document.createElement("div");
+  slot.className = "latest-slot";
+  const img = document.createElement("img");
+  const bossNorm = normalizePath(state.lastBossName || "");
+  img.src = `./webui/images/${bossNorm}/${normalizePath(latestItem)}.png`;
+  img.alt = latestItem;
+  slot.appendChild(img);
+  icons.appendChild(slot);
 }
 
 function handleChatLine(rawLine) {
