@@ -55,6 +55,26 @@ alt1://addapp/https://rssaltea.github.io/amascut-helper/appconfig.json
 
 ---
 
+## Run Locally in a Browser
+
+You can host the overlay locally to view it in a normal browser (useful for testing the chat view without Alt1):
+
+1. Install dependencies:
+
+   ```bash
+   npm install
+   ```
+
+2. Start the local server (defaults to port `8080`):
+
+   ```bash
+   npm start
+   ```
+
+3. Open [http://localhost:8080](http://localhost:8080) in your browser. You should see the same UI Alt1 renders, powered by the local `server.js` static host.
+
+---
+
 ## Usage
 
 * Open the app in Alt1.

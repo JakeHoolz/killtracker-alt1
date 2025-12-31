@@ -1,0 +1,5 @@
+node_modules/
+
+# Local environment artifacts
+/tmp/
+.DS_Store
