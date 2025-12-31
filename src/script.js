@@ -418,7 +418,7 @@ function loadBaselineKC(boss) {
 
 function startChatReader() {
   const reader = new Chatbox.default();
-  reader.readargs = { backwards: true };
+  reader.readargs = { backwards: true, colors: [] };
 
   function tick() {
     try {
