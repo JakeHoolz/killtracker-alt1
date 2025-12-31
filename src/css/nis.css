@@ -22,12 +22,12 @@
 
 
 .nismainborder{position:absolute; top:0px; left:0px; right:0px; bottom:0px;}
-.nisborder{border-width:4px; border-style:solid; -moz-border-image:url('https://runeapps.org/nis/alt1-currentskin/borderSprite.png') 4 repeat; border-image:url('https://runeapps.org/nis/alt1-currentskin/borderSprite.png') 4 repeat; background:url('https://runeapps.org/nis/alt1-currentskin/background.png'); overflow:hidden;}
-.nisexitbutton{background:url('https://runeapps.org/nis/alt1-currentskin/exitSprite.png'); position:absolute; top:-4px; right:-4px; width:12px; height:12px; cursor:pointer; z-index:1000;}
+.nisborder{border-width:4px; border-style:solid; -moz-border-image:url('/nis/alt1-currentskin/borderSprite.png') 4 repeat; border-image:url('/nis/alt1-currentskin/borderSprite.png') 4 repeat; background:url('/nis/alt1-currentskin/background.png'); overflow:hidden;}
+.nisexitbutton{background:url('/nis/alt1-currentskin/exitSprite.png'); position:absolute; top:-4px; right:-4px; width:12px; height:12px; cursor:pointer; z-index:1000;}
 .nisexitbutton:hover{background-position:0px -12px;}
 .nisseperator{width:100%; height:0px; border-top:1px solid #000; border-bottom:1px solid #41555F; position:absolute; left:0px;}
 
-.nissmallimagebutton{width:21px; height:21px; cursor:pointer; user-select:none; -webkit-user-select:none; -moz-user-select:none; -ms-user-select:none; background-image:url("https://runeapps.org/nis/alt1-currentskin/buttonsmall.png"); background-size:auto 42px;}
+.nissmallimagebutton{width:21px; height:21px; cursor:pointer; user-select:none; -webkit-user-select:none; -moz-user-select:none; -ms-user-select:none; background-image:url("/nis/alt1-currentskin/buttonsmall.png"); background-size:auto 42px;}
 .nissmallimagebutton:hover{background-position:0px -21px;}
 .nissmallimagebutton.offset1{background-position:-21px 0px;}
 .nissmallimagebutton.offset1:hover{background-position:-21px -21px;}
@@ -41,7 +41,7 @@
 .nistinyimagebutton.offset2{background-position:-42px 0px;}
 .nistinyimagebutton.offset2:hover{background-position:-42px -19px;}
 
-.nisimgbutton{ width:20px; height:20px; border:3px solid #212B2D; box-sizing:border-box; border-image:url('https://runeapps.org/nis/alt1-currentskin/imgbutton.png') 3 fill; cursor:pointer;}
+.nisimgbutton{ width:20px; height:20px; border:3px solid #212B2D; box-sizing:border-box; border-image:url('/nis/alt1-currentskin/imgbutton.png') 3 fill; cursor:pointer;}
 .nisimgbutton:hover{ filter:brightness(1.2);}
 
 .nistext{ color:var(--nis-col-std);}
@@ -50,7 +50,7 @@
 	.nistable tr:nth-child(odd){background:rgba(255,255,255,0.15);}
 	.nistable th{color:#DDD;}
 
-.contenttab, .contenttableft{float:right; width:90px; height:20px; line-height:20px; text-align:center; color:#BBB; cursor:pointer; background:url('https://runeapps.org/nis/alt1-currentskin/tabback.png') 0 0 / 100% 100%; position:relative; margin-left:-14px; z-index:11; margin-top:-1px;}
+.contenttab, .contenttableft{float:right; width:90px; height:20px; line-height:20px; text-align:center; color:#BBB; cursor:pointer; background:url('/nis/alt1-currentskin/tabback.png') 0 0 / 100% 100%; position:relative; margin-left:-14px; z-index:11; margin-top:-1px;}
 .contenttab.lefttab{float:left; margin-left:0px; margin-right:-14px;}
 .contenttab:not(.activetab){z-index:10; -webkit-filter:brightness(50%); filter:brightness(50%); margin-top:1px; height:18px;}
 
@@ -61,9 +61,9 @@
 .nisdropdown{height:19px; cursor:pointer; outline:none; box-sizing:border-box; padding:0px 0px 0px 4px;}
 .nisdropdown>option{background:#1D190D;}
 
-.nisbutton{height:32px; position:relative; background:url('https://runeapps.org/nis/alt1-currentskin/nisbutton.png') 0px -100%/24px 400% repeat content-box; cursor:pointer; text-align:center; color:#000; font-family:'trajan-pro-3'; text-shadow:1px 1px 2px #ECC622; font-size:18px; margin:5px; padding:0px 12px; line-height:32px; user-select:none; -webkit-user-select:none;}
-.nisbutton::before{width:12px; height:100%; content:""; position:absolute; top:0px; left:0px; background:url('https://runeapps.org/nis/alt1-currentskin/nisbutton.png') 0px 0px / 24px 400%;}
-.nisbutton::after{width:12px; height:100%; content:""; position:absolute; top:0px; right:0px; background:url('https://runeapps.org/nis/alt1-currentskin/nisbutton.png') -12px 0px / 24px 400%;}
+.nisbutton{height:32px; position:relative; background:url('/nis/alt1-currentskin/nisbutton.png') 0px -100%/24px 400% repeat content-box; cursor:pointer; text-align:center; color:#000; font-family:'trajan-pro-3'; text-shadow:1px 1px 2px #ECC622; font-size:18px; margin:5px; padding:0px 12px; line-height:32px; user-select:none; -webkit-user-select:none;}
+.nisbutton::before{width:12px; height:100%; content:""; position:absolute; top:0px; left:0px; background:url('/nis/alt1-currentskin/nisbutton.png') 0px 0px / 24px 400%;}
+.nisbutton::after{width:12px; height:100%; content:""; position:absolute; top:0px; right:0px; background:url('/nis/alt1-currentskin/nisbutton.png') -12px 0px / 24px 400%;}
 .nisbutton:hover{background-position:0px -300%;}
 .nisbutton:hover::before{background-position:0px -200%;}
 .nisbutton:hover::after{background-position:-12px -200%;}
@@ -73,9 +73,9 @@
 .pb2_nis .pb2-button, .nisbutton2{padding:0.15em; user-select:none; border:1px solid #485b65; border-radius:3px; background:linear-gradient(to bottom,#2a799c,#123443 25%); font-weight:bold; color:#ddd; cursor:pointer; box-shadow:0px 0px 5px #152932 inset; text-align:center; box-sizing:border-box;}
 .pb2_nis .pb2-button:hover, .nisbutton2:hover{background:linear-gradient(to bottom,#2a799c,#1b4e65 25%); color:white;}
 
-body.nis{background-image:url('https://runeapps.org/nis/alt1-currentskin/background.png'); background-color:var(--nis-col-back); overflow:hidden; margin:0px; font-family:sans-serif; font-size:13px; color:var(--nis-col-std);}
+body.nis{background-image:url('/nis/alt1-currentskin/background.png'); background-color:var(--nis-col-back); overflow:hidden; margin:0px; font-family:sans-serif; font-size:13px; color:var(--nis-col-std);}
 
-.nisclosebutton{width:12px; height:12px; background:url('https://runeapps.org/nis/alt1-currentskin/exitSprite.png'); cursor:pointer;}
+.nisclosebutton{width:12px; height:12px; background:url('/nis/alt1-currentskin/exitSprite.png'); cursor:pointer;}
 .nisclosebutton:hover{background-position:0px -12px;}
 
 /*Chromium custom scrollbars, will only work on chromium browsers (such as alt1) */
@@ -85,35 +85,35 @@ body.nis *:not(.normalscroll)::-webkit-scrollbar
 
 body.nis::-webkit-scrollbar-button:start:vertical,
 body.nis *:not(.normalscroll)::-webkit-scrollbar-button:start:vertical
-{background-image:url('https://runeapps.org/nis/alt1-currentskin/scroll.png'); background-position:0px 0px; height:15px;}
+{background-image:url('default/scroll.png'); background-position:0px 0px; height:15px;}
 
 body.nis::-webkit-scrollbar-button:end:vertical,
 body.nis *:not(.normalscroll)::-webkit-scrollbar-button:end:vertical
-{background-image:url('https://runeapps.org/nis/alt1-currentskin/scroll.png'); background-position:-45px 0px; height:15px;}		
+{background-image:url('default/scroll.png'); background-position:-45px 0px; height:15px;}		
 
 body.nis::-webkit-scrollbar-track:vertical,
 body.nis *:not(.normalscroll)::-webkit-scrollbar-track:vertical
-{background-image:url('https://runeapps.org/nis/alt1-currentskin/scroll.png'); background-position:-15px 0px;}
+{background-image:url('default/scroll.png'); background-position:-15px 0px;}
 
 body.nis::-webkit-scrollbar-thumb:vertical,
 body.nis *:not(.normalscroll)::-webkit-scrollbar-thumb:vertical
-{background-image:url('https://runeapps.org/nis/alt1-currentskin/scroll.png'); background-position:-30px 0px; border-radius:5px;}
+{background-image:url('default/scroll.png'); background-position:-30px 0px; border-radius:5px;}
 
 body.nis::-webkit-scrollbar-button:start:horizontal,
 body.nis *:not(.normalscroll)::-webkit-scrollbar-button:start:horizontal
-{background-image:url('https://runeapps.org/nis/alt1-currentskin/scrollhor.png'); background-position:0px 0px; width:15px;}		
+{background-image:url('default/scrollhor.png'); background-position:0px 0px; width:15px;}		
 
 body.nis::-webkit-scrollbar-button:end:horizontal,
 body.nis *:not(.normalscroll)::-webkit-scrollbar-button:end:horizontal
-{background-image:url('https://runeapps.org/nis/alt1-currentskin/scrollhor.png'); background-position:0px -45px; width:15px;}		
+{background-image:url('default/scrollhor.png'); background-position:0px -45px; width:15px;}		
 
 body.nis::-webkit-scrollbar-track:horizontal,
 body.nis *:not(.normalscroll)::-webkit-scrollbar-track:horizontal
-{background-image:url('https://runeapps.org/nis/alt1-currentskin/scrollhor.png'); background-position:0px -15px;}
+{background-image:url('default/scrollhor.png'); background-position:0px -15px;}
 
 body.nis::-webkit-scrollbar-thumb:horizontal,
 body.nis *:not(.normalscroll)::-webkit-scrollbar-thumb:horizontal
-{background-image:url('https://runeapps.org/nis/alt1-currentskin/scrollhor.png'); background-position:0px -30px; border-radius:5px;}
+{background-image:url('default/scrollhor.png'); background-position:0px -30px; border-radius:5px;}
 
 body.nis::-webkit-scrollbar-corner,
 body.nis *:not(.normalscroll)::-webkit-scrollbar-corner
