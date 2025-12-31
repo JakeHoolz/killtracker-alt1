@@ -460,5 +460,15 @@ function showSelected(pos) {
 (async function init() {
   await loadStaticData();
   updateUI();
+  if (!window.alt1) {
+    log("Alt1 not detected; chat reading disabled.");
+    return;
+  }
+
+  if (!alt1?.permissionPixel) {
+    log("Alt1 pixel permission missing. Re-add the app to grant screen capture permissions.");
+    return;
+  }
+
   startChatReader();
 })();
