@@ -2,7 +2,7 @@ const express = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
-const { get, run, migrate } = require('./db');
+const { get, run, migrate } = require('../db');
 
 const JWT_SECRET = process.env.JWT_SECRET || 'change-me-in-prod';
 
