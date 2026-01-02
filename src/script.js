@@ -139,7 +139,8 @@ const state = {
   latestUnique: null,
 };
 
-const API_BASE = "/api";
+// Use a relative API base so hosted subdirectories (e.g., /alt-killtracker) resolve correctly.
+const API_BASE = "api";
 const TOKEN_STORAGE_KEY = "killtracker_auth_token";
 let authToken = null;
 let currentUser = null;
