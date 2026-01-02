@@ -139,6 +139,13 @@ const state = {
   latestUnique: null,
 };
 
+const API_BASE = "/api";
+const TOKEN_STORAGE_KEY = "killtracker_auth_token";
+let authToken = null;
+let currentUser = null;
+let stateDirty = false;
+let syncTimer = null;
+
 async function loadStaticData() {
   try {
     const resp = await fetch("./rs3-stats/boss_uniques_map.txt");
@@ -266,6 +273,195 @@ function saveClueCountsToStorage() {
     localStorage.setItem(CLUE_STORAGE_KEY, JSON.stringify(obj));
   } catch (e) {
     console.warn("Failed to save clueCounts to storage:", e);
+  }
+}
+
+function serializeState() {
+  return {
+    petKC: Array.from(state.petKC.entries()),
+    latestKC: Array.from(state.latestKC.entries()),
+    collectionCounts: Array.from(state.collectionCounts.entries()),
+    clueCounts: Array.from(state.clueCounts.entries()),
+    latestUnique: state.latestUnique,
+    lastBossName: state.lastBossName,
+    lastBossMode: state.lastBossMode,
+    lastKillCount: state.lastKillCount,
+    lastNMKC: state.lastNMKC,
+    lastHMKC: state.lastHMKC,
+    sessionStartKC: state.sessionStartKC,
+  };
+}
+
+function hydrateState(data = {}) {
+  if (Array.isArray(data.petKC)) state.petKC = new Map(data.petKC);
+  if (Array.isArray(data.latestKC)) state.latestKC = new Map(data.latestKC);
+  if (Array.isArray(data.collectionCounts)) state.collectionCounts = new Map(data.collectionCounts);
+  if (Array.isArray(data.clueCounts)) state.clueCounts = new Map(data.clueCounts);
+
+  state.latestUnique = data.latestUnique || null;
+  state.lastBossName = data.lastBossName || null;
+  state.lastBossMode = data.lastBossMode || null;
+  state.lastKillCount = Number(data.lastKillCount) || 0;
+  state.lastNMKC = Number(data.lastNMKC) || 0;
+  state.lastHMKC = Number(data.lastHMKC) || 0;
+  state.sessionStartKC = data.sessionStartKC ?? state.sessionStartKC;
+
+  ensureClueCounters();
+  saveClueCountsToStorage();
+  updateUI();
+}
+
+function setAuthToken(token, user) {
+  authToken = token;
+  if (token) {
+    localStorage.setItem(TOKEN_STORAGE_KEY, token);
+  } else {
+    localStorage.removeItem(TOKEN_STORAGE_KEY);
+  }
+  if (user) currentUser = user;
+  updateAuthUI();
+}
+
+function authHeaders() {
+  return authToken ? { Authorization: `Bearer ${authToken}` } : {};
+}
+
+function updateAuthStatus(text) {
+  const status = document.getElementById("auth-status");
+  const compact = document.getElementById("auth-status-compact");
+  if (status) status.textContent = text;
+  if (compact) compact.textContent = text;
+}
+
+function updateAuthUI() {
+  const form = document.getElementById("auth-form");
+  const summary = document.getElementById("auth-summary");
+  const logoutBtn = document.getElementById("logout-button");
+  const userEl = document.getElementById("auth-user-name");
+
+  if (currentUser && authToken) {
+    form?.classList.add("hidden");
+    summary?.classList.remove("hidden");
+    if (userEl) userEl.textContent = currentUser.username;
+    if (logoutBtn) logoutBtn.disabled = false;
+  } else {
+    form?.classList.remove("hidden");
+    summary?.classList.add("hidden");
+  }
+}
+
+async function apiFetch(path, options = {}) {
+  const headers = {
+    "Content-Type": "application/json",
+    ...(options.headers || {}),
+    ...authHeaders(),
+  };
+
+  return fetch(`${API_BASE}${path}`, {
+    ...options,
+    headers,
+  });
+}
+
+async function handleAuth(action) {
+  const username = document.getElementById("auth-username")?.value?.trim();
+  const password = document.getElementById("auth-password")?.value;
+  if (!username || !password) {
+    updateAuthStatus("Username and password are required");
+    return;
+  }
+
+  updateAuthStatus(`${action === "register" ? "Registering" : "Signing in"}...`);
+  try {
+    const resp = await apiFetch(`/${action}`, {
+      method: "POST",
+      body: JSON.stringify({ username, password }),
+    });
+
+    const json = await resp.json().catch(() => ({}));
+    if (!resp.ok) {
+      throw new Error(json?.error || "Request failed");
+    }
+
+    setAuthToken(json.token, json.user);
+    updateAuthStatus("Signed in");
+    await loadRemoteState();
+    markStateDirty();
+  } catch (err) {
+    updateAuthStatus(err?.message || "Authentication failed");
+    setAuthToken(null, null);
+  }
+}
+
+async function loadRemoteState() {
+  if (!authToken) return;
+  try {
+    const resp = await apiFetch("/stats");
+    if (!resp.ok) throw new Error(`Failed to load stats (${resp.status})`);
+    const json = await resp.json();
+    hydrateState(json?.data || {});
+    stateDirty = false;
+    updateAuthStatus("Synced with server");
+  } catch (err) {
+    updateAuthStatus(err?.message || "Unable to sync");
+  }
+}
+
+function markStateDirty() {
+  stateDirty = true;
+  queueStateSync();
+}
+
+function queueStateSync() {
+  if (!authToken || !stateDirty) return;
+  clearTimeout(syncTimer);
+  syncTimer = setTimeout(syncStateToServer, 1200);
+}
+
+async function syncStateToServer() {
+  if (!authToken || !stateDirty) return;
+  try {
+    const payload = serializeState();
+    const resp = await apiFetch("/stats", {
+      method: "PUT",
+      body: JSON.stringify({ data: payload }),
+    });
+    if (!resp.ok) throw new Error(`Save failed (${resp.status})`);
+    stateDirty = false;
+    updateAuthStatus("Saved");
+  } catch (err) {
+    updateAuthStatus(err?.message || "Save failed");
+  }
+}
+
+function setupAuthUI() {
+  const registerBtn = document.getElementById("register-button");
+  const form = document.getElementById("auth-form");
+  const logoutBtn = document.getElementById("logout-button");
+
+  form?.addEventListener("submit", (e) => {
+    e.preventDefault();
+    handleAuth("login");
+  });
+
+  registerBtn?.addEventListener("click", (e) => {
+    e.preventDefault();
+    handleAuth("register");
+  });
+
+  logoutBtn?.addEventListener("click", () => {
+    setAuthToken(null, null);
+    currentUser = null;
+    updateAuthStatus("Logged out");
+  });
+
+  const existing = localStorage.getItem(TOKEN_STORAGE_KEY);
+  if (existing) {
+    authToken = existing;
+    updateAuthUI();
+    loadRemoteState();
+  } else {
+    updateAuthUI();
   }
 }
 
@@ -464,6 +660,7 @@ function handleChatLine(rawLine) {
     loadBaselineKC(boss);
     updateUI();
     log(`Session resumed for ${boss}`);
+    markStateDirty();
     return;
   }
 
@@ -482,6 +679,7 @@ function handleChatLine(rawLine) {
     state.lastKillCount = kc;
     updateUI();
     log(`Milestone: ${boss} at ${kc}`);
+    markStateDirty();
     return;
   }
 
@@ -553,6 +751,7 @@ function handleKill(boss, kc, hm) {
   processPendingDrops(kc, key);
   updateUI();
   log(`KC updated for ${boss}: ${kc} (${state.lastBossMode})`);
+  markStateDirty();
 }
 
 function processPendingDrops(kc, bossKey) {
@@ -576,16 +775,18 @@ function resolveDrop(item, kc) {
   const bossKey = normalizeBoss(state.lastBossName);
   const uniques = state.bossUniques[bossKey] || [];
 
+  let changed = false;
+
   /* === PET DROP === */
   if (PET_ITEM_NAMES.has(item) && !state.petKC.has(bossKey)) {
     state.petKC.set(bossKey, kc);
+    changed = true;
 
     log(
       `🐾 PET OBTAINED — ${state.lastBossName} pet at ${kc.toLocaleString()} KC`,
       "success"
     );
 
-    // Optional: visual pulse on latest unique panel
     const panel = document.getElementById("latest-unique-panel");
     if (panel) {
       panel.classList.add("glow");
@@ -595,15 +796,17 @@ function resolveDrop(item, kc) {
 
   if (uniques.includes(item)) {
     const uniqueKey = `${bossKey}|${kc}|${item}`;
-    if (state.sessionLoggedUniques.has(uniqueKey)) return;
-    state.sessionLoggedUniques.add(uniqueKey);
-    const prev = state.collectionCounts.get(item) || 0;
-    state.collectionCounts.set(item, prev + 1);
-    state.latestUnique = { item, kc };
-    log(`Unique drop: ${item} at ${kc}`);
+    if (!state.sessionLoggedUniques.has(uniqueKey)) {
+      state.sessionLoggedUniques.add(uniqueKey);
+      const prev = state.collectionCounts.get(item) || 0;
+      state.collectionCounts.set(item, prev + 1);
+      state.latestUnique = { item, kc };
+      log(`Unique drop: ${item} at ${kc}`);
+      changed = true;
+    }
   }
 
-    const tier = extractClueTier(item);
+  const tier = extractClueTier(item);
   if (tier) {
     const clueKey = `${bossKey}|${kc}|${item}`;
 
@@ -611,18 +814,18 @@ function resolveDrop(item, kc) {
       state.sessionLoggedCluesKC.add(clueKey);
       state.sessionLoggedClues.add(`${bossKey}|${item}`);
 
-      ensureClueCounters(); // ✅ safety net
+      ensureClueCounters();
+      const prev = state.clueCounts.get(tier) || 0;
+      state.clueCounts.set(tier, prev + 1);
 
-	  const prev = state.clueCounts.get(tier);
-	  state.clueCounts.set(tier, prev + 1);
-
-	  saveClueCountsToStorage();
-
+      saveClueCountsToStorage();
 
       log(`Clue scroll (${tier}) at ${kc.toLocaleString()}`, "drop");
+      changed = true;
     }
   }
 
+  if (changed) markStateDirty();
 }
 
 function loadBaselineKC(boss) {
@@ -688,6 +891,7 @@ function showSelected(pos) {
   // ✅ load persisted clue counts
   loadClueCountsFromStorage();
   ensureClueCounters();
+  setupAuthUI();
   updateUI();
   if (!window.alt1) {
     log("Alt1 not detected; chat reading disabled.");
