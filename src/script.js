@@ -81,6 +81,7 @@ const state = {
   lastKillCount: 0,
   lastNMKC: 0,
   lastHMKC: 0,
+  lastKillAt: 0,
   sessionStartKC: null,
   pendingDrops: [],
   recentBuffered: new Set(),
@@ -392,6 +393,18 @@ function bufferDrop(item) {
   }
   state.recentBuffered.add(item);
   state.pendingDrops.push({ item, timestamp: now });
+  if (
+    state.lastBossName &&
+    state.lastKillCount > 0 &&
+    state.lastKillAt &&
+    now - state.lastKillAt <= RECEIVE_WINDOW_MS
+  ) {
+    const resolved = processPendingDrops(
+      state.lastKillCount,
+      normalizeBoss(state.lastBossName)
+    );
+    if (resolved) updateUI();
+  }
   if (!state.lastBossName) {
     state.sessionStartKC = state.lastKillCount;
   }
@@ -401,6 +414,7 @@ function bufferDrop(item) {
 function handleKill(boss, kc, hm) {
   state.lastBossName = boss;
   state.lastBossMode = hm ? "HM" : "NM";
+  state.lastKillAt = Date.now();
   if (hm) state.lastHMKC = kc; else state.lastNMKC = kc;
   state.lastKillCount = Math.max(state.lastKillCount, (state.lastNMKC || 0) + (state.lastHMKC || 0));
   if (state.sessionStartKC == null) state.sessionStartKC = state.lastKillCount - 1;
@@ -410,19 +424,26 @@ function handleKill(boss, kc, hm) {
   if (hm) entry.hm = Math.max(entry.hm, kc); else entry.nm = Math.max(entry.nm, kc);
   state.latestKC.set(key, entry);
 
+  processPendingDrops(kc, key);
+  updateUI();
+  log(`KC updated for ${boss}: ${kc} (${state.lastBossMode})`);
+}
+
+function processPendingDrops(kc, bossKey) {
   const now = Date.now();
   const remaining = [];
+  let resolved = false;
   for (const pd of state.pendingDrops) {
     if (now - pd.timestamp > RECEIVE_WINDOW_MS) continue;
-    const dedupeKey = `${kc}|${pd.item}|${key}`;
+    const dedupeKey = `${kc}|${pd.item}|${bossKey}`;
     if (state.lastLoggedDropKey === dedupeKey && now - state.lastLoggedDropAt <= DROP_DEDUPE_WINDOW_MS) continue;
     state.lastLoggedDropKey = dedupeKey;
     state.lastLoggedDropAt = now;
     resolveDrop(pd.item, kc);
+    resolved = true;
   }
   state.pendingDrops = remaining;
-  updateUI();
-  log(`KC updated for ${boss}: ${kc} (${state.lastBossMode})`);
+  return resolved;
 }
 
 function resolveDrop(item, kc) {
