@@ -83,10 +83,60 @@ router.post('/register', async (req, res) => {
   return res.status(201).json({ token, user });
 });
 
+router.post('/users/:username/register', async (req, res) => {
+  const { username } = req.params;
+  const { password, username: bodyUsername } = req.body || {};
+
+  if (!password) {
+    return res.status(400).json({ error: 'Username and password required' });
+  }
+
+  if (bodyUsername && bodyUsername !== username) {
+    return res.status(400).json({ error: 'Username mismatch' });
+  }
+
+  const existing = await findUserByUsername(username);
+  if (existing) {
+    return res.status(409).json({ error: 'User already exists' });
+  }
+
+  const passwordHash = await bcrypt.hash(password, 10);
+  const result = await run(
+    'INSERT INTO users (username, password_hash) VALUES ($1, $2) RETURNING id',
+    [username, passwordHash]
+  );
+
+  const user = { id: result.rows[0].id, username };
+  const token = createToken(user);
+  return res.status(201).json({ token, user });
+});
+
 router.post('/login', async (req, res) => {
   const { username, password } = req.body || {};
   if (!username || !password) {
     return res.status(400).json({ error: 'Username and password required' });
+  }
+
+  const user = await findUserByUsername(username);
+  if (!user) return res.status(401).json({ error: 'Invalid credentials' });
+
+  const ok = await bcrypt.compare(password, user.password_hash);
+  if (!ok) return res.status(401).json({ error: 'Invalid credentials' });
+
+  const token = createToken(user);
+  return res.json({ token, user: { id: user.id, username: user.username } });
+});
+
+router.post('/users/:username/login', async (req, res) => {
+  const { username } = req.params;
+  const { password, username: bodyUsername } = req.body || {};
+
+  if (!password) {
+    return res.status(400).json({ error: 'Username and password required' });
+  }
+
+  if (bodyUsername && bodyUsername !== username) {
+    return res.status(400).json({ error: 'Username mismatch' });
   }
 
   const user = await findUserByUsername(username);
@@ -111,6 +161,38 @@ router.put('/stats', authMiddleware, async (req, res) => {
   }
 
   await upsertStats(req.user.id, data);
+  return res.json({ ok: true });
+});
+
+router.get('/users/:username/stats', authMiddleware, async (req, res) => {
+  const { username } = req.params;
+  if (username !== req.user.username) {
+    return res.status(403).json({ error: 'Forbidden' });
+  }
+
+  const user = await findUserByUsername(username);
+  if (!user) return res.status(404).json({ error: 'User not found' });
+
+  const data = await getStats(user.id);
+  return res.json({ data });
+});
+
+router.put('/users/:username/stats', authMiddleware, async (req, res) => {
+  const { username } = req.params;
+  const { data } = req.body || {};
+
+  if (username !== req.user.username) {
+    return res.status(403).json({ error: 'Forbidden' });
+  }
+
+  if (!data || typeof data !== 'object') {
+    return res.status(400).json({ error: 'Missing stats payload' });
+  }
+
+  const user = await findUserByUsername(username);
+  if (!user) return res.status(404).json({ error: 'User not found' });
+
+  await upsertStats(user.id, data);
   return res.json({ ok: true });
 });
 
