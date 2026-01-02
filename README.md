@@ -42,8 +42,12 @@ The server exposes JSON endpoints under `/api`:
 
 - `POST /api/register` – Create a user (body: `{ username, password }`).
 - `POST /api/login` – Authenticate and receive a bearer token.
+- `POST /api/users/:username/register` – Create a specific user (body may omit `username`).
+- `POST /api/users/:username/login` – Authenticate a specific user (body may omit `username`).
 - `GET /api/stats` – Fetch the authenticated user's saved stats.
 - `PUT /api/stats` – Persist stats for the authenticated user (body: `{ data }`).
+- `GET /api/users/:username/stats` – Fetch stats for the named user (requires matching auth token).
+- `PUT /api/users/:username/stats` – Persist stats for the named user (requires matching auth token).
 
 Include `Authorization: Bearer <token>` on protected routes. Tokens are signed with `JWT_SECRET` and attach the user to `req` via middleware.
 
