@@ -53,15 +53,9 @@ const BUFFER_CLEAR_INTERVAL = 3000;
 
 const KILL_PATTERN = /You have killed ([\d,]+)\s+(.+?)(?: \((hard mode|hm)\)| in (normal mode|hard mode))?\./i;
 const MILESTONE_PATTERN = /Milestone: You have killed ([\d,]+) (.+?)!/i;
-const RECEIVE_QTY_PATTERN = /(?:\d+(?:\s*[x×]\s*)?|(?:a |an )?)/i;
-const RECEIVE_PATTERN = new RegExp(
-  `You receive:\\s*${RECEIVE_QTY_PATTERN.source}(.+?)(?:[.!?]|$)`,
-  "i"
-);
-const GOLDEN_BEAM_PATTERN = new RegExp(
-  `A golden beam shines over one of your items\\.\\s*You receive:\\s*${RECEIVE_QTY_PATTERN.source}(.+?)(?:[.!?]|$)`,
-  "i"
-);
+const RECEIVE_PATTERN = /You receive:\s*\d+(?:\s*[x×]\s*)?(.+?)(?:[.!?]|$)/i;
+const GOLDEN_BEAM_PATTERN =
+  /A golden beam shines over one of your items\.\s*You receive:\s*\d+(?:\s*[x×]\s*)?(.+?)(?:[.!?]|$)/i;
 const NEWS_DROP_PATTERN = /News: (.+?) has received (?:a |an )?(.+?) drop!(?: at ([\d,]+) kills!)?/i;
 const SESSION_WELCOME_PATTERN = /Welcome to your session again: (.+?)\./i;
 
