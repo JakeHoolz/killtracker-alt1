@@ -1,4 +1,8 @@
-A1lib.identifyApp("appconfig.json");
+if (window.A1lib?.identifyApp) {
+  A1lib.identifyApp("appconfig.json");
+} else {
+  console.warn("Alt1 base library missing; chat reading disabled.");
+}
 
 function log(msg) {
   console.log(msg);
@@ -462,8 +466,13 @@ function loadBaselineKC(boss) {
 }
 
 function startChatReader() {
+  if (!window.Chatbox?.default) {
+    log("Chatbox library missing; ensure vendor scripts are loaded.");
+    return;
+  }
+
   const reader = new Chatbox.default();
-  reader.readargs = { backwards: true, colors: [] };
+  reader.readargs = { ...reader.readargs, backwards: true };
 
   function tick() {
     try {
