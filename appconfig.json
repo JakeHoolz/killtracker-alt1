@@ -1,7 +1,7 @@
 {
   "appName": "Kill Tracker Overlay",
   "description": "Tracks boss kill counts, drops, and clues using chat OCR in Alt1.",
-  "appUrl": "https://jakepvg.com/alt-killtracker/index.html",
+  "appUrl": "https://jakepvg/alt1-killtracker/index.html",
   "version": "2.0.0",
   "configUrl": "./appconfig.json",
   "iconUrl": "./src/icon.png",
