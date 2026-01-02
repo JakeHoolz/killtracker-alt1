@@ -14,45 +14,90 @@
   <link rel="stylesheet" href="./src/css/style.css" />
 </head>
 <body class="nis">
-  <div id="app" class="panel">
-    <div class="panel-header">
-      <div class="boss-block">
-        <img id="boss-image" class="boss-image" alt="Boss" />
-        <div class="boss-text">
-          <div id="boss-name" class="boss-name">Waiting for boss...</div>
-        </div>
-      </div>
-      <div class="session-stats">
-        <div class="stat-line"><span class="label">Session KC:</span><span class="value" id="stat-session">—</span></div>
-        <div class="stat-line"><span class="label">Pet KC:</span><span class="value" id="stat-pet">—</span></div>
-        <div class="stat-line"><span class="label">Since Pet:</span><span class="value" id="stat-since-pet">—</span></div>
+  <div id="overlay-container">
+    <div id="boss-header">
+      <img id="boss-image" src="" alt="Boss" />
+      <div id="boss-info">
+        <h1 id="boss-name">Waiting for boss...</h1>
       </div>
     </div>
 
-    <div class="panel-body">
-      <div class="stat-column">
-        <div class="stat-line"><span class="label">Total KC:</span><span class="value" id="stat-total">—</span></div>
-        <div class="stat-line"><span class="label">Normal Mode:</span><span class="value" id="stat-nm">—</span></div>
-        <div class="stat-line"><span class="label">Hard Mode:</span><span class="value" id="stat-hm">—</span></div>
-        <div class="stat-line"><span class="label">Session KC:</span><span class="value" id="stat-session-inline">—</span></div>
-        <div class="stat-line"><span class="label">Pet KC:</span><span class="value" id="stat-pet-inline">—</span></div>
-        <div class="stat-line"><span class="label">Since Pet:</span><span class="value" id="stat-since-pet-inline">—</span></div>
+    <div id="main-content">
+      <div id="stats-panel">
+        <div class="stat-row">
+          <span class="label">Total KC</span>
+          <span id="stat-total" class="stat-value">—</span>
+        </div>
+
+        <div class="stat-row stat-sub">
+          <span class="label">Normal Mode</span>
+          <span id="stat-nm" class="stat-value">—</span>
+        </div>
+
+        <div class="stat-row stat-sub">
+          <span class="label">Hard Mode</span>
+          <span id="stat-hm" class="stat-value">—</span>
+        </div>
+
+        <div class="stat-row">
+          <span class="label">Session KC</span>
+          <span id="stat-session" class="stat-value">—</span>
+        </div>
+
+        <div class="stat-row stat-hidden">
+          <span class="label">Session KC</span>
+          <span id="stat-session-inline" class="stat-value">—</span>
+        </div>
+
+        <div class="stat-row">
+          <span class="label">Pet KC</span>
+          <span id="stat-pet" class="stat-value">—</span>
+        </div>
+
+        <div class="stat-row stat-hidden">
+          <span class="label">Pet KC</span>
+          <span id="stat-pet-inline" class="stat-value">—</span>
+        </div>
+
+        <div class="stat-row">
+          <span class="label">Since Pet</span>
+          <span id="stat-since-pet" class="stat-value">—</span>
+        </div>
+
+        <div class="stat-row stat-hidden">
+          <span class="label">Since Pet</span>
+          <span id="stat-since-pet-inline" class="stat-value">—</span>
+        </div>
+
+        <div class="stat-row">
+          <span class="label">Log Progress</span>
+          <span id="stat-log" class="stat-value">—</span>
+        </div>
+
+        <div class="stat-row">
+          <span class="label">Total Uniques</span>
+          <span id="stat-uniques" class="stat-value">—</span>
+        </div>
+
+        <div class="stat-row">
+          <span class="label">Dry Streak</span>
+          <span id="stat-dry" class="stat-value">—</span>
+        </div>
+
+        <div id="clues-row"></div>
       </div>
 
-      <div class="collection-section">
-        <div class="collection-meta">
-          <div class="stat-line compact"><span class="label">Collection log:</span><span class="value" id="stat-log">—</span></div>
-          <div class="stat-line compact"><span class="label">Total Uniques:</span><span class="value" id="stat-uniques">—</span></div>
-          <div class="stat-line compact"><span class="label">Dry Streak:</span><span class="value" id="stat-dry">—</span></div>
-        </div>
+      <div id="log-panel">
         <div id="collection-log" class="collection-grid"></div>
       </div>
     </div>
 
-    <div class="latest-row">
-      <span class="label">Latest Unique:</span>
-      <div id="latest-unique-text" class="value">—</div>
-      <div id="latest-unique-icons" class="latest-icons"></div>
+    <div id="latest-unique-panel">
+      <div class="stat-row latest-row">
+        <span class="label">Latest Unique</span>
+        <div id="latest-unique-icons" class="latest-icons"></div>
+        <span id="latest-unique-text" class="stat-value">—</span>
+      </div>
     </div>
 
     <div id="output" class="console"></div>
