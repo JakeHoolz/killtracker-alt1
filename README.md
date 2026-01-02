@@ -73,28 +73,6 @@ You can host the overlay locally to view it in a normal browser (useful for test
 
 3. Open [http://localhost:8080](http://localhost:8080) in your browser. You should see the same UI Alt1 renders, powered by the local `server.js` static host.
 
-
-### Database & API
-
-The server exposes `/api/login`, `/api/register`, and `/api/stats` for syncing kill/drop data per user. By default it uses a
-local PostgreSQL database (`alt1-tracker` on `localhost:5432`).
-
-Run the migration script before starting the server to ensure the tables exist:
-
-```
-npm run migrate
-```
-
-Environment variables:
-
-* `PORT` – Port for the Express server (defaults to `8080`).
-* `DATABASE_URL` – Full PostgreSQL connection string. If set, overrides the individual PG* values below.
-* `PGHOST` – PostgreSQL host (defaults to `localhost`).
-* `PGPORT` – PostgreSQL port (defaults to `5432`).
-* `PGDATABASE` – PostgreSQL database name (defaults to `alt1-tracker`).
-* `PGUSER` / `PGPASSWORD` – Credentials for the database connection.
-* `JWT_SECRET` – Secret used to sign session tokens.
-
 ---
 
 ## Usage
