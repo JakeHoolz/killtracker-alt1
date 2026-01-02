@@ -53,11 +53,9 @@ const BUFFER_CLEAR_INTERVAL = 3000;
 
 const KILL_PATTERN = /You have killed ([\d,]+)\s+(.+?)(?: \((hard mode|hm)\)| in (normal mode|hard mode))?\./i;
 const MILESTONE_PATTERN = /Milestone: You have killed ([\d,]+) (.+?)!/i;
-const RECEIVE_PATTERN = /
-  You receive:\s*(?:\d+(?:\s*[x×]\s*)?)?(.+?)(?:[.!?]|$)
-/gi;
+const RECEIVE_PATTERN = /You receive:\s*\d+(?:\s*[x×]\s*)?(.+?)(?:[.!?]|$)/i;
 const GOLDEN_BEAM_PATTERN =
-  /A golden beam shines over one of your items\.\s*You receive:\s*(?:\d+(?:\s*[x×]\s*)?)?(.+?)(?:[.!?]|$)/gi;
+  /A golden beam shines over one of your items\.\s*You receive:\s*\d+(?:\s*[x×]\s*)?(.+?)(?:[.!?]|$)/i;
 const NEWS_DROP_PATTERN = /News: (.+?) has received (?:a |an )?(.+?) drop!(?: at ([\d,]+) kills!)?/i;
 const SESSION_WELCOME_PATTERN = /Welcome to your session again: (.+?)\./i;
 
@@ -340,70 +338,55 @@ function updateLatestUnique() {
 }
 
 function handleChatLine(rawLine) {
-  const cleaned = stripTags(rawLine)
-    .replace(/^\[(?:\d{2}:){2}\d{2}\]\s*/, "")
-    .trim();
-  if (!cleaned) return;
+  const line = stripTags(rawLine).trim();
+  if (!line) return;
+  if (shouldIgnoreLine(line)) return;
 
-  for (const part of cleaned.split(/\s*\n+\s*/)) {
-    const line = part.trim();
-    if (!line || shouldIgnoreLine(line)) continue;
-
-    let m;
-    if ((m = SESSION_WELCOME_PATTERN.exec(line))) {
-      const boss = m[1];
-      state.lastBossName = boss;
-      state.sessionStartKC = state.lastKillCount || 0;
-      loadBaselineKC(boss);
-      updateUI();
-      log(`Session resumed for ${boss}`);
-      continue;
-    }
-
-    if ((m = KILL_PATTERN.exec(line))) {
-      const kc = Number(m[1].replace(/,/g, ""));
-      const boss = m[2].replace(/\s*\(.*?\)/, "").trim();
-      const hm = !!(m[3] || (m[4] && m[4].toLowerCase().includes("hard")));
-      handleKill(boss, kc, hm);
-      continue;
-    }
-
-    if ((m = MILESTONE_PATTERN.exec(line))) {
-      const kc = Number(m[1].replace(/,/g, ""));
-      const boss = m[2];
-      state.lastBossName = boss;
-      state.lastKillCount = kc;
-      updateUI();
-      log(`Milestone: ${boss} at ${kc}`);
-      continue;
-    }
-
-    for (const item of extractDropItems(line)) {
-      bufferDrop(item);
-    }
-
-    if ((m = NEWS_DROP_PATTERN.exec(line))) {
-      log(`News drop spotted for ${m[1]}: ${m[2]}`);
-      continue;
-    }
+  let m;
+  if ((m = SESSION_WELCOME_PATTERN.exec(line))) {
+    const boss = m[1];
+    state.lastBossName = boss;
+    state.sessionStartKC = state.lastKillCount || 0;
+    loadBaselineKC(boss);
+    updateUI();
+    log(`Session resumed for ${boss}`);
+    return;
   }
-}
 
-function extractDropItems(line) {
-  const items = [];
-  for (const pattern of [GOLDEN_BEAM_PATTERN, RECEIVE_PATTERN]) {
-    pattern.lastIndex = 0;
-    let m;
-    while ((m = pattern.exec(line))) {
-      const normalized = normalizeItem(stripQuantity(m[1]));
-      if (normalized) items.push(normalized);
-    }
+  if ((m = KILL_PATTERN.exec(line))) {
+    const kc = Number(m[1].replace(/,/g, ""));
+    const boss = m[2].replace(/\s*\(.*?\)/, "").trim();
+    const hm = !!(m[3] || (m[4] && m[4].toLowerCase().includes("hard")));
+    handleKill(boss, kc, hm);
+    return;
   }
-  return items;
-}
 
-function stripQuantity(text) {
-  return (text || "").replace(/^\d+(?:\s*[x×]\s*)?/i, "").trim();
+  if ((m = MILESTONE_PATTERN.exec(line))) {
+    const kc = Number(m[1].replace(/,/g, ""));
+    const boss = m[2];
+    state.lastBossName = boss;
+    state.lastKillCount = kc;
+    updateUI();
+    log(`Milestone: ${boss} at ${kc}`);
+    return;
+  }
+
+  if ((m = GOLDEN_BEAM_PATTERN.exec(line))) {
+    const item = normalizeItem(m[1]);
+    bufferDrop(item);
+    return;
+  }
+
+  if ((m = RECEIVE_PATTERN.exec(line))) {
+    const item = normalizeItem(m[1]);
+    bufferDrop(item);
+    return;
+  }
+
+  if ((m = NEWS_DROP_PATTERN.exec(line))) {
+    log(`News drop spotted for ${m[1]}: ${m[2]}`);
+    return;
+  }
 }
 
 function bufferDrop(item) {
