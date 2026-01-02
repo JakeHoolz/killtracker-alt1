@@ -51,7 +51,10 @@ const CLUE_ITEMS = new Set([
   "sealed clue scroll hard",
   "sealed clue scroll elite",
   "sealed clue scroll master",
-]);
+].map(normalizeItem));
+
+
+
 
 const PET_ITEM_NAMES = new Set([
   "king black dragon scale","kalphite egg","shrivelled dagannoth claw","dagannoth egg",
@@ -216,6 +219,45 @@ function extractClueTier(item) {
   if (item.includes("master")) return "master";
   return null;
 }
+
+/* ======================= CLUE PERSISTENCE ======================= */
+
+const CLUE_STORAGE_KEY = "killtracker_clueCounts_v1";
+
+function loadClueCountsFromStorage() {
+  try {
+    const raw = localStorage.getItem(CLUE_STORAGE_KEY);
+    if (!raw) return;
+
+    const obj = JSON.parse(raw);
+    if (!obj || typeof obj !== "object") return;
+
+    // Keep your Map structure
+    state.clueCounts = new Map();
+    for (const tier of ["easy", "medium", "hard", "elite", "master"]) {
+      const v = Number(obj[tier] ?? 0);
+      state.clueCounts.set(tier, Number.isFinite(v) ? v : 0);
+    }
+  } catch (e) {
+    console.warn("Failed to load clueCounts from storage:", e);
+  }
+}
+
+function saveClueCountsToStorage() {
+  try {
+    const obj = {
+      easy: state.clueCounts.get("easy") || 0,
+      medium: state.clueCounts.get("medium") || 0,
+      hard: state.clueCounts.get("hard") || 0,
+      elite: state.clueCounts.get("elite") || 0,
+      master: state.clueCounts.get("master") || 0,
+    };
+    localStorage.setItem(CLUE_STORAGE_KEY, JSON.stringify(obj));
+  } catch (e) {
+    console.warn("Failed to save clueCounts to storage:", e);
+  }
+}
+
 
 function getSessionKC() {
   if (state.sessionStartKC == null) return 0;
@@ -550,17 +592,24 @@ function resolveDrop(item, kc) {
     log(`Unique drop: ${item} at ${kc}`);
   }
 
-  const tier = extractClueTier(item);
+    const tier = extractClueTier(item);
   if (tier) {
     const clueKey = `${bossKey}|${kc}|${item}`;
+
     if (!state.sessionLoggedCluesKC.has(clueKey)) {
       state.sessionLoggedCluesKC.add(clueKey);
       state.sessionLoggedClues.add(`${bossKey}|${item}`);
+
       const prev = state.clueCounts.get(tier) || 0;
       state.clueCounts.set(tier, prev + 1);
-      log(`Clue scroll (${tier}) at ${kc}`);
+
+      // ✅ persist
+      saveClueCountsToStorage();
+
+      log(`Clue scroll (${tier}) at ${kc.toLocaleString()}`, "drop");
     }
   }
+
 }
 
 function loadBaselineKC(boss) {
@@ -622,6 +671,10 @@ function showSelected(pos) {
 
 (async function init() {
   await loadStaticData();
+
+  // ✅ load persisted clue counts
+  loadClueCountsFromStorage();
+
   updateUI();
   if (!window.alt1) {
     log("Alt1 not detected; chat reading disabled.");
