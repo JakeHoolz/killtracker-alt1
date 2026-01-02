@@ -54,6 +54,8 @@ const BUFFER_CLEAR_INTERVAL = 3000;
 const KILL_PATTERN = /You have killed ([\d,]+)\s+(.+?)(?: \((hard mode|hm)\)| in (normal mode|hard mode))?\./i;
 const MILESTONE_PATTERN = /Milestone: You have killed ([\d,]+) (.+?)!/i;
 const RECEIVE_PATTERN = /You receive:\s*\d+(?:\s*[x×]\s*)?(.+?)(?:[.!?]|$)/i;
+const GOLDEN_BEAM_PATTERN =
+  /A golden beam shines over one of your items\.\s*You receive:\s*\d+(?:\s*[x×]\s*)?(.+?)(?:[.!?]|$)/i;
 const NEWS_DROP_PATTERN = /News: (.+?) has received (?:a |an )?(.+?) drop!(?: at ([\d,]+) kills!)?/i;
 const SESSION_WELCOME_PATTERN = /Welcome to your session again: (.+?)\./i;
 
@@ -366,6 +368,12 @@ function handleChatLine(rawLine) {
     state.lastKillCount = kc;
     updateUI();
     log(`Milestone: ${boss} at ${kc}`);
+    return;
+  }
+
+  if ((m = GOLDEN_BEAM_PATTERN.exec(line))) {
+    const item = normalizeItem(m[1]);
+    bufferDrop(item);
     return;
   }
 
