@@ -53,8 +53,7 @@ const BUFFER_CLEAR_INTERVAL = 3000;
 
 const KILL_PATTERN = /You have killed ([\d,]+)\s+(.+?)(?: \((hard mode|hm)\)| in (normal mode|hard mode))?\./i;
 const MILESTONE_PATTERN = /Milestone: You have killed ([\d,]+) (.+?)!/i;
-const RECEIVE_LINE_PATTERN = /You receive:\s*(.+)/i;
-const RECEIVE_ITEMS_PATTERN = /(?:([\d,]+)\s*[x×]\s*)?([^,.;]+?)(?=,|;|\.\s|\.$|$)/gi;
+const RECEIVE_PATTERN = /You receive:\s*(?:([\d,]+)\s*[x×]\s*)?(.+?)(?:[.!?]|$)/i;
 const GOLDEN_BEAM_PATTERN =
   /A golden beam shines over one of your items[.!]?\s*You receive:\s*(?:([\d,]+)\s*[x×]\s*)?(.+?)(?:[.!?]|$)/i;
 const NEWS_DROP_PATTERN = /News: (.+?) has received (?:a |an )?(.+?) drop!(?: at ([\d,]+) kills!)?/i;
@@ -379,17 +378,10 @@ function handleChatLine(rawLine) {
     return;
   }
 
-  if ((m = RECEIVE_LINE_PATTERN.exec(line))) {
-    let matched = false;
-    const itemsPart = m[1];
-    RECEIVE_ITEMS_PATTERN.lastIndex = 0;
-    for (const match of itemsPart.matchAll(RECEIVE_ITEMS_PATTERN)) {
-      const item = normalizeItem(match[2]);
-      if (!item) continue;
-      bufferDrop(item, eventTimestamp);
-      matched = true;
-    }
-    if (matched) return;
+  if ((m = RECEIVE_PATTERN.exec(line))) {
+    const item = normalizeItem(m[2]);
+    bufferDrop(item, eventTimestamp);
+    return;
   }
 
   if ((m = NEWS_DROP_PATTERN.exec(line))) {
