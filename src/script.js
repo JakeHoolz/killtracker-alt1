@@ -338,7 +338,9 @@ function updateLatestUnique() {
 }
 
 function handleChatLine(rawLine) {
-  const line = stripTags(rawLine).trim();
+  const line = stripTags(rawLine)
+    .replace(/^\[(?:\d{2}:){2}\d{2}\]\s*/, "")
+    .trim();
   if (!line) return;
   if (shouldIgnoreLine(line)) return;
 
