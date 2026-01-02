@@ -53,8 +53,7 @@ const CLUE_ITEMS = new Set([
   "sealed clue scroll master",
 ].map(normalizeItem));
 
-
-
+const CLUE_TIERS = ["easy", "medium", "hard", "elite", "master"];
 
 const PET_ITEM_NAMES = new Set([
   "king black dragon scale","kalphite egg","shrivelled dagannoth claw","dagannoth egg",
@@ -84,8 +83,7 @@ const BUFFER_CLEAR_INTERVAL = 3000;
 const KILL_PATTERN = /You have killed ([\d,]+)\s+(.+?)(?: \((hard mode|hm)\)| in (normal mode|hard mode))?\./i;
 const MILESTONE_PATTERN = /Milestone: You have killed ([\d,]+) (.+?)!/i;
 const RECEIVE_PATTERN = /You receive:\s*(?:([\d,]+)\s*[x×]\s*)?(.+?)(?:[.!?]|$)/i;
-const GOLDEN_BEAM_PATTERN =
-  /A golden beam shines over one of your items[.!]?\s*You receive:\s*(?:([\d,]+)\s*[x×]\s*)?(.+?)(?:[.!?]|$)/i;
+const GOLDEN_BEAM_PATTERN = /A golden beam shines over one of your items[.!]?\s*You receive:\s*(?:([\d,]+)\s*[x×]\s*)?(.+?)(?:[.!?]|$)/i;
 const NEWS_DROP_PATTERN = /News: (.+?) has received (?:a |an )?(.+?) drop!(?: at ([\d,]+) kills!)?/i;
 const SESSION_WELCOME_PATTERN = /Welcome to your session again: (.+?)\./i;
 
@@ -103,6 +101,19 @@ function normalizePath(s) {
 function stripTags(s) {
   return (s || "").replace(/<[^>]+>/g, "");
 }
+
+function ensureClueCounters() {
+  if (!(state.clueCounts instanceof Map)) {
+    state.clueCounts = new Map();
+  }
+
+  for (const tier of CLUE_TIERS) {
+    if (!state.clueCounts.has(tier)) {
+      state.clueCounts.set(tier, 0);
+    }
+  }
+}
+
 
 const state = {
   bossUniques: {},
@@ -600,11 +611,13 @@ function resolveDrop(item, kc) {
       state.sessionLoggedCluesKC.add(clueKey);
       state.sessionLoggedClues.add(`${bossKey}|${item}`);
 
-      const prev = state.clueCounts.get(tier) || 0;
-      state.clueCounts.set(tier, prev + 1);
+      ensureClueCounters(); // ✅ safety net
 
-      // ✅ persist
-      saveClueCountsToStorage();
+	  const prev = state.clueCounts.get(tier);
+	  state.clueCounts.set(tier, prev + 1);
+
+	  saveClueCountsToStorage();
+
 
       log(`Clue scroll (${tier}) at ${kc.toLocaleString()}`, "drop");
     }
@@ -674,7 +687,7 @@ function showSelected(pos) {
 
   // ✅ load persisted clue counts
   loadClueCountsFromStorage();
-
+  ensureClueCounters();
   updateUI();
   if (!window.alt1) {
     log("Alt1 not detected; chat reading disabled.");
