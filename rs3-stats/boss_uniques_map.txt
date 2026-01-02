@@ -188,7 +188,7 @@ dormant anima core helm
 dormant anima core body
 dormant anima core legs
 serenic essence
-wand of cywir elders
+wand of the cywir elders
 orb of the cywir elders
 twisted antler
 
@@ -196,6 +196,16 @@ hermond the spirit of war:
 hermodic plate
 animated drumsticks
 hermod's armour spike
+
+gregorvic:
+crest of sliske
+dormant anima core helm
+dormant anima core body
+dormant anima core legs
+sliskean essence
+shadow glaive
+off hand shadow glaive
+faceless mask
 
 kalphite king:
 drygore longsword
@@ -333,3 +343,13 @@ heart of the berserker
 calcified heart
 jail cell key
 occultist's ring
+
+vindicta gorvek:
+crest of zaros
+dormant anima core helm
+dormant anima core body
+dormant anima core legs
+zarosian essence
+dragon rider lance
+imbued blade slice
+glimmering scale
