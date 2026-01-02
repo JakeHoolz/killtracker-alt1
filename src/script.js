@@ -295,16 +295,49 @@ function updateUI() {
 }
 
 function renderClues() {
-  const container = document.getElementById("clues");
+  /* ============================================================
+     FIX: Match original UI
+     - Horizontal row
+     - Same item-cell style as uniques
+     - Count badge top-right
+     - Always 5 slots
+     ============================================================ */
+
+  const container =
+    document.getElementById("clues-row") ||
+    document.getElementById("clues");
+
   if (!container) return;
+
   container.innerHTML = "";
+
   const tiers = ["easy", "medium", "hard", "elite", "master"];
+
   tiers.forEach((tier) => {
     const count = state.clueCounts.get(tier) || 0;
-    const div = document.createElement("div");
-    div.className = "clue";
-    div.innerHTML = `<img src="${getClueImage(tier)}" alt="${tier}"><div><div>${tier}</div><div class="log-count">${count}</div></div>`;
-    container.appendChild(div);
+
+    const cell = document.createElement("div");
+    cell.className = "item-cell";
+
+    const img = document.createElement("img");
+    img.src = getClueImage(tier);
+    img.alt = `Clue scroll (${tier})`;
+
+    if (count === 0) {
+      img.classList.add("unobtained");
+      cell.classList.add("unobtained");
+    }
+
+    cell.appendChild(img);
+
+    if (count > 1) {
+      const badge = document.createElement("span");
+      badge.className = "item-count";
+      badge.textContent = count;
+      cell.appendChild(badge);
+    }
+
+    container.appendChild(cell);
   });
 }
 
@@ -577,6 +610,8 @@ function startChatReader() {
 
   const finder = setInterval(findChat, 800);
 }
+
+
 
 function showSelected(pos) {
   try {
