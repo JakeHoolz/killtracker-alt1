@@ -4,15 +4,42 @@ if (window.A1lib?.identifyApp) {
   console.warn("Alt1 base library missing; chat reading disabled.");
 }
 
-function log(msg) {
-  console.log(msg);
+function log(message, type = "info") {
+  console.log(`[${type}]`, message);
+
   const out = document.getElementById("output");
   if (!out) return;
-  const div = document.createElement("div");
-  div.textContent = msg;
-  out.prepend(div);
-  while (out.childElementCount > 80) out.removeChild(out.lastChild);
+
+  const line = document.createElement("div");
+  line.className = `log-line log-${type}`;
+
+  const time = document.createElement("span");
+  time.className = "log-time";
+  time.textContent = new Date().toLocaleTimeString();
+
+  const icon = document.createElement("span");
+  icon.className = "log-icon";
+  icon.textContent = ({
+    info: "ℹ️",
+    success: "✅",
+    warn: "⚠️",
+    error: "❌",
+    drop: "✨",
+    kc: "🗡️"
+  })[type] || "•";
+
+  const text = document.createElement("span");
+  text.className = "log-text";
+  text.textContent = message;
+
+  line.append(time, icon, text);
+  out.prepend(line);
+
+  while (out.childElementCount > 120) {
+    out.removeChild(out.lastChild);
+  }
 }
+
 
 if (!window.alt1) {
   document.body.innerHTML = `<div style="padding:16px">Alt1 not detected. Open this page in Alt1 or click <a href="alt1://addapp/${location.href}">here</a> to add the app.</div>`;
@@ -462,9 +489,22 @@ function processPendingDrops(kc, bossKey) {
 function resolveDrop(item, kc) {
   const bossKey = normalizeBoss(state.lastBossName);
   const uniques = state.bossUniques[bossKey] || [];
+
+  /* === PET DROP === */
   if (PET_ITEM_NAMES.has(item) && !state.petKC.has(bossKey)) {
     state.petKC.set(bossKey, kc);
-    log(`Pet obtained at ${kc}!`);
+
+    log(
+      `🐾 PET OBTAINED — ${state.lastBossName} pet at ${kc.toLocaleString()} KC`,
+      "success"
+    );
+
+    // Optional: visual pulse on latest unique panel
+    const panel = document.getElementById("latest-unique-panel");
+    if (panel) {
+      panel.classList.add("glow");
+      setTimeout(() => panel.classList.remove("glow"), 1600);
+    }
   }
 
   if (uniques.includes(item)) {
