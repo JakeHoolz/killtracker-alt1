@@ -154,7 +154,7 @@ body {
 
 #collection-log {
   display: grid;
-  grid-template-columns: repeat(6, 72.5px);
+  grid-template-columns: repeat(6, 65.5px);
   gap: 12px;
   padding: 16px 33px;
   border: 2px solid var(--border);
