@@ -86,7 +86,7 @@ const state = {
   lastKillAt: 0,
   sessionStartKC: null,
   pendingDrops: [],
-  recentBuffered: new Set(),
+  recentBuffered: new Map(),
   lastRecentClear: 0,
   sessionLoggedUniques: new Set(),
   sessionLoggedClues: new Set(),
@@ -341,6 +341,7 @@ function handleChatLine(rawLine) {
   const line = stripTags(rawLine).trim();
   if (!line) return;
   if (shouldIgnoreLine(line)) return;
+  const eventTimestamp = Date.now();
 
   let m;
   if ((m = SESSION_WELCOME_PATTERN.exec(line))) {
@@ -373,13 +374,13 @@ function handleChatLine(rawLine) {
 
   if ((m = GOLDEN_BEAM_PATTERN.exec(line))) {
     const item = normalizeItem(m[2]);
-    bufferDrop(item);
+    bufferDrop(item, eventTimestamp);
     return;
   }
 
   if ((m = RECEIVE_PATTERN.exec(line))) {
     const item = normalizeItem(m[2]);
-    bufferDrop(item);
+    bufferDrop(item, eventTimestamp);
     return;
   }
 
@@ -389,23 +390,27 @@ function handleChatLine(rawLine) {
   }
 }
 
-function bufferDrop(item) {
-  const now = Date.now();
-  if (now - state.lastRecentClear > BUFFER_CLEAR_INTERVAL) {
-    state.recentBuffered.clear();
-    state.lastRecentClear = now;
+function bufferDrop(item, timestamp = Date.now()) {
+  if (timestamp - state.lastRecentClear > BUFFER_CLEAR_INTERVAL) {
+    for (const [recentItem, ts] of state.recentBuffered) {
+      if (timestamp - ts > BUFFER_CLEAR_INTERVAL) {
+        state.recentBuffered.delete(recentItem);
+      }
+    }
+    state.lastRecentClear = timestamp;
   }
-  if (state.recentBuffered.has(item)) {
+  const lastBufferedAt = state.recentBuffered.get(item);
+  if (lastBufferedAt === timestamp) {
     log(`Ignoring duplicate drop line: ${item}`);
     return;
   }
-  state.recentBuffered.add(item);
-  state.pendingDrops.push({ item, timestamp: now });
+  state.recentBuffered.set(item, timestamp);
+  state.pendingDrops.push({ item, timestamp });
   if (
     state.lastBossName &&
     state.lastKillCount > 0 &&
     state.lastKillAt &&
-    now - state.lastKillAt <= RECEIVE_WINDOW_MS
+    timestamp - state.lastKillAt <= RECEIVE_WINDOW_MS
   ) {
     const resolved = processPendingDrops(
       state.lastKillCount,
