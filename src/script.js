@@ -119,6 +119,7 @@ const state = {
   bossUniques: {},
   petKC: new Map(),
   latestKC: new Map(),
+  username: null,
   lastBossName: null,
   lastBossMode: null,
   lastKillCount: 0,
@@ -134,6 +135,7 @@ const state = {
   sessionLoggedCluesKC: new Set(),
   lastLoggedDropKey: null,
   lastLoggedDropAt: 0,
+  persistHandle: null,
   collectionCounts: new Map(),
   clueCounts: new Map(),
   latestUnique: null,
@@ -234,6 +236,8 @@ function extractClueTier(item) {
 /* ======================= CLUE PERSISTENCE ======================= */
 
 const CLUE_STORAGE_KEY = "killtracker_clueCounts_v1";
+const USERNAME_STORAGE_KEY = "killtracker_username_v1";
+const SAVE_DEBOUNCE_MS = 1200;
 
 function loadClueCountsFromStorage() {
   try {
@@ -267,6 +271,172 @@ function saveClueCountsToStorage() {
   } catch (e) {
     console.warn("Failed to save clueCounts to storage:", e);
   }
+}
+
+function serializePlayerStats() {
+  ensureClueCounters();
+  const clueCounts = {};
+  for (const tier of CLUE_TIERS) {
+    clueCounts[tier] = state.clueCounts.get(tier) || 0;
+  }
+
+  return {
+    lastBossName: state.lastBossName,
+    lastBossMode: state.lastBossMode,
+    lastKillCount: state.lastKillCount,
+    lastNMKC: state.lastNMKC,
+    lastHMKC: state.lastHMKC,
+    sessionStartKC: state.sessionStartKC,
+    petKC: Array.from(state.petKC.entries()),
+    collectionCounts: Array.from(state.collectionCounts.entries()),
+    clueCounts,
+    latestUnique: state.latestUnique,
+    latestKC: Array.from(state.latestKC.entries()),
+  };
+}
+
+function resetPlayerState() {
+  state.petKC = new Map();
+  state.latestKC = new Map();
+  state.collectionCounts = new Map();
+  state.clueCounts = new Map();
+  state.latestUnique = null;
+  state.lastBossName = null;
+  state.lastBossMode = null;
+  state.lastKillCount = 0;
+  state.lastNMKC = 0;
+  state.lastHMKC = 0;
+  state.lastKillAt = 0;
+  state.sessionStartKC = 0;
+  state.pendingDrops = [];
+  state.recentBuffered = new Map();
+  state.sessionLoggedUniques = new Set();
+  state.sessionLoggedClues = new Set();
+  state.sessionLoggedCluesKC = new Set();
+  state.lastLoggedDropKey = null;
+  state.lastLoggedDropAt = 0;
+}
+
+function applyPersistedStats(data) {
+  if (!data || typeof data !== "object") return;
+
+  state.lastBossName = data.lastBossName || null;
+  state.lastBossMode = data.lastBossMode || null;
+  state.lastKillCount = Number(data.lastKillCount) || 0;
+  state.lastNMKC = Number(data.lastNMKC) || 0;
+  state.lastHMKC = Number(data.lastHMKC) || 0;
+  state.sessionStartKC = Number.isFinite(data.sessionStartKC)
+    ? data.sessionStartKC
+    : state.lastKillCount;
+
+  state.petKC = new Map(Array.isArray(data.petKC) ? data.petKC : []);
+  state.collectionCounts = new Map(
+    Array.isArray(data.collectionCounts) ? data.collectionCounts : []
+  );
+  state.latestKC = new Map(Array.isArray(data.latestKC) ? data.latestKC : []);
+  state.latestUnique = data.latestUnique || null;
+
+  state.clueCounts = new Map();
+  const savedClues = data.clueCounts || {};
+  for (const tier of CLUE_TIERS) {
+    const v = Number(savedClues[tier] || 0);
+    state.clueCounts.set(tier, Number.isFinite(v) ? v : 0);
+  }
+
+  ensureClueCounters();
+}
+
+function updatePlayerStatus(text, tone = "info") {
+  const statusEl = document.getElementById("player-status");
+  if (!statusEl) return;
+  statusEl.textContent = text || "";
+  statusEl.style.color = tone === "error" ? "#ff9a9a" : "#9cd67d";
+}
+
+async function loadStatsFromServer(username) {
+  try {
+    const resp = await fetch(`/api/stats/${encodeURIComponent(username)}`);
+    if (resp.status === 404) return null;
+    if (!resp.ok) throw new Error(await resp.text());
+    const json = await resp.json();
+    return json.data || null;
+  } catch (e) {
+    console.warn("Failed to load stats", e);
+    updatePlayerStatus("Load failed", "error");
+    return null;
+  }
+}
+
+async function saveStatsToServer() {
+  if (!state.username) return;
+  state.persistHandle = null;
+  try {
+    const payload = serializePlayerStats();
+    const resp = await fetch(`/api/stats/${encodeURIComponent(state.username)}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ data: payload }),
+    });
+    if (!resp.ok) throw new Error(await resp.text());
+    updatePlayerStatus("Saved");
+  } catch (e) {
+    console.warn("Failed to save stats", e);
+    updatePlayerStatus("Save failed", "error");
+  }
+}
+
+function markStatsForPersistence() {
+  ensureClueCounters();
+  if (state.username) {
+    if (state.persistHandle) clearTimeout(state.persistHandle);
+    state.persistHandle = setTimeout(saveStatsToServer, SAVE_DEBOUNCE_MS);
+  } else {
+    saveClueCountsToStorage();
+  }
+}
+
+async function applyUsername(username) {
+  const trimmed = (username || "").trim();
+  const input = document.getElementById("player-username");
+  if (input) input.value = trimmed;
+
+  if (!trimmed) {
+    state.username = null;
+    updatePlayerStatus("Using local session");
+    resetPlayerState();
+    loadClueCountsFromStorage();
+    ensureClueCounters();
+    updateUI();
+    return;
+  }
+
+  state.username = trimmed.toLowerCase();
+  localStorage.setItem(USERNAME_STORAGE_KEY, state.username);
+  resetPlayerState();
+  updatePlayerStatus("Loading stats...");
+
+  const saved = await loadStatsFromServer(state.username);
+  if (saved) {
+    applyPersistedStats(saved);
+    updatePlayerStatus("Loaded saved stats");
+  } else {
+    ensureClueCounters();
+    updatePlayerStatus("Tracking new stats");
+  }
+
+  updateUI();
+}
+
+function setupPlayerControls(defaultUsername = "") {
+  const input = document.getElementById("player-username");
+  const button = document.getElementById("player-save");
+
+  if (input && defaultUsername) input.value = defaultUsername;
+
+  button?.addEventListener("click", () => applyUsername(input?.value || ""));
+  input?.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") applyUsername(input.value || "");
+  });
 }
 
 
@@ -553,6 +723,7 @@ function handleKill(boss, kc, hm) {
   processPendingDrops(kc, key);
   updateUI();
   log(`KC updated for ${boss}: ${kc} (${state.lastBossMode})`);
+  markStatsForPersistence();
 }
 
 function processPendingDrops(kc, bossKey) {
@@ -572,58 +743,64 @@ function processPendingDrops(kc, bossKey) {
   return resolved;
 }
 
-function resolveDrop(item, kc) {
-  const bossKey = normalizeBoss(state.lastBossName);
-  const uniques = state.bossUniques[bossKey] || [];
+  function resolveDrop(item, kc) {
+    const bossKey = normalizeBoss(state.lastBossName);
+    const uniques = state.bossUniques[bossKey] || [];
+    let changed = false;
 
-  /* === PET DROP === */
-  if (PET_ITEM_NAMES.has(item) && !state.petKC.has(bossKey)) {
-    state.petKC.set(bossKey, kc);
+    /* === PET DROP === */
+    if (PET_ITEM_NAMES.has(item) && !state.petKC.has(bossKey)) {
+      state.petKC.set(bossKey, kc);
+      changed = true;
 
-    log(
-      `🐾 PET OBTAINED — ${state.lastBossName} pet at ${kc.toLocaleString()} KC`,
-      "success"
-    );
+      log(
+        `🐾 PET OBTAINED — ${state.lastBossName} pet at ${kc.toLocaleString()} KC`,
+        "success"
+      );
 
-    // Optional: visual pulse on latest unique panel
-    const panel = document.getElementById("latest-unique-panel");
-    if (panel) {
-      panel.classList.add("glow");
-      setTimeout(() => panel.classList.remove("glow"), 1600);
+      // Optional: visual pulse on latest unique panel
+      const panel = document.getElementById("latest-unique-panel");
+      if (panel) {
+        panel.classList.add("glow");
+        setTimeout(() => panel.classList.remove("glow"), 1600);
+      }
     }
-  }
 
-  if (uniques.includes(item)) {
-    const uniqueKey = `${bossKey}|${kc}|${item}`;
-    if (state.sessionLoggedUniques.has(uniqueKey)) return;
-    state.sessionLoggedUniques.add(uniqueKey);
-    const prev = state.collectionCounts.get(item) || 0;
-    state.collectionCounts.set(item, prev + 1);
-    state.latestUnique = { item, kc };
-    log(`Unique drop: ${item} at ${kc}`);
-  }
+    if (uniques.includes(item)) {
+      const uniqueKey = `${bossKey}|${kc}|${item}`;
+      if (state.sessionLoggedUniques.has(uniqueKey)) return;
+      state.sessionLoggedUniques.add(uniqueKey);
+      const prev = state.collectionCounts.get(item) || 0;
+      state.collectionCounts.set(item, prev + 1);
+      state.latestUnique = { item, kc };
+      log(`Unique drop: ${item} at ${kc}`);
+      changed = true;
+    }
 
     const tier = extractClueTier(item);
-  if (tier) {
-    const clueKey = `${bossKey}|${kc}|${item}`;
+    if (tier) {
+      const clueKey = `${bossKey}|${kc}|${item}`;
 
-    if (!state.sessionLoggedCluesKC.has(clueKey)) {
-      state.sessionLoggedCluesKC.add(clueKey);
-      state.sessionLoggedClues.add(`${bossKey}|${item}`);
+      if (!state.sessionLoggedCluesKC.has(clueKey)) {
+        state.sessionLoggedCluesKC.add(clueKey);
+        state.sessionLoggedClues.add(`${bossKey}|${item}`);
 
-      ensureClueCounters(); // ✅ safety net
+        ensureClueCounters(); // ✅ safety net
 
-	  const prev = state.clueCounts.get(tier);
-	  state.clueCounts.set(tier, prev + 1);
+        const prev = state.clueCounts.get(tier) || 0;
+        state.clueCounts.set(tier, prev + 1);
 
-	  saveClueCountsToStorage();
-
-
-      log(`Clue scroll (${tier}) at ${kc.toLocaleString()}`, "drop");
+        log(`Clue scroll (${tier}) at ${kc.toLocaleString()}`, "drop");
+        changed = true;
+      }
     }
-  }
 
-}
+    if (changed) {
+      updateUI();
+      markStatsForPersistence();
+    }
+
+  }
 
 function loadBaselineKC(boss) {
   const key = normalizeBoss(boss);
@@ -685,10 +862,17 @@ function showSelected(pos) {
 (async function init() {
   await loadStaticData();
 
-  // ✅ load persisted clue counts
-  loadClueCountsFromStorage();
-  ensureClueCounters();
-  updateUI();
+  const savedUsername = localStorage.getItem(USERNAME_STORAGE_KEY) || "";
+  setupPlayerControls(savedUsername);
+
+  if (savedUsername) {
+    await applyUsername(savedUsername);
+  } else {
+    // ✅ load persisted clue counts when no username is set
+    loadClueCountsFromStorage();
+    ensureClueCounters();
+    updateUI();
+  }
   if (!window.alt1) {
     log("Alt1 not detected; chat reading disabled.");
     return;

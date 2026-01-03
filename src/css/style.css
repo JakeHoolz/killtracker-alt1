@@ -93,6 +93,36 @@ body {
   padding: 6px 0;
 }
 
+#player-settings {
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+#player-settings input {
+  flex: 1 1 120px;
+  padding: 6px 10px;
+  font-size: 16px;
+  background: #1a1c20;
+  color: #f0f0f0;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+}
+
+#player-settings button {
+  padding: 8px 12px;
+  font-size: 16px;
+  font-weight: 700;
+  background: var(--gold);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+#player-status {
+  font-size: 16px;
+  color: #9cd67d;
+}
+
 .label {
   font-size: 35px;
 }
