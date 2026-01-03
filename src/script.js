@@ -353,9 +353,15 @@ function updatePlayerStatus(text, tone = "info") {
   statusEl.style.color = tone === "error" ? "#ff9a9a" : "#9cd67d";
 }
 
+function buildApiUrl(path) {
+  return new URL(`./api/${path.replace(/^\//, "")}`, window.location.href);
+}
+
 async function loadStatsFromServer(username) {
   try {
-    const resp = await fetch(`/api/stats/${encodeURIComponent(username)}`);
+    const resp = await fetch(
+      buildApiUrl(`/stats/${encodeURIComponent(username)}`).toString()
+    );
     if (resp.status === 404) return null;
     if (!resp.ok) throw new Error(await resp.text());
     const json = await resp.json();
@@ -372,11 +378,14 @@ async function saveStatsToServer() {
   state.persistHandle = null;
   try {
     const payload = serializePlayerStats();
-    const resp = await fetch(`/api/stats/${encodeURIComponent(state.username)}`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ data: payload }),
-    });
+    const resp = await fetch(
+      buildApiUrl(`/stats/${encodeURIComponent(state.username)}`).toString(),
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ data: payload }),
+      }
+    );
     if (!resp.ok) throw new Error(await resp.text());
     updatePlayerStatus("Saved");
   } catch (e) {
