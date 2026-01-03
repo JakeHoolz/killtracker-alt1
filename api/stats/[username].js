@@ -1,4 +1,4 @@
-const { db, ensureTablePromise } = require('../db');
+const { db, ensureTablesPromise, bossNames } = require('../db');
 
 async function readJsonBody(req) {
   if (req.body && typeof req.body === 'object') return req.body;
@@ -31,7 +31,7 @@ module.exports = async function handler(req, res) {
   }
 
   try {
-    await ensureTablePromise;
+    await ensureTablesPromise;
   } catch (err) {
     console.error('Database initialization failed', err);
     res.statusCode = 500;
@@ -43,8 +43,29 @@ module.exports = async function handler(req, res) {
     try {
       const { rows } = await db.query('SELECT data FROM player_stats WHERE username = $1', [username]);
       if (!rows.length) {
-        res.statusCode = 404;
-        res.json({ message: 'No stats found' });
+        const defaultBosses = bossNames.reduce((acc, name) => {
+          acc[name] = { kc: 0, pets: 0, uniques: [] };
+          return acc;
+        }, {});
+
+        const defaultData = { bosses: defaultBosses };
+        await db.query(
+          'INSERT INTO player_stats (username, data, updated_at) VALUES ($1, $2, NOW()) ON CONFLICT (username) DO NOTHING',
+          [username, defaultData]
+        );
+
+        const bossInserts = bossNames.map((name) =>
+          db.query(
+            `INSERT INTO player_boss_stats (username, boss_name, data, updated_at)
+             VALUES ($1, $2, $3, NOW())
+             ON CONFLICT (username, boss_name)
+             DO NOTHING`,
+            [username, name, defaultBosses[name]]
+          )
+        );
+        await Promise.all(bossInserts);
+
+        res.json({ data: defaultData, created: true });
         return;
       }
 
@@ -82,6 +103,27 @@ module.exports = async function handler(req, res) {
          DO UPDATE SET data = EXCLUDED.data, updated_at = EXCLUDED.updated_at`,
         [username, payload]
       );
+
+      const bosses = payload.bosses && typeof payload.bosses === 'object' ? payload.bosses : {};
+      const bossUpserts = Object.entries(bosses).map(([boss, data]) => {
+        const safeData = typeof data === 'object' && data !== null ? data : {};
+        return db.query(
+          `INSERT INTO boss_definitions (boss_name) VALUES ($1) ON CONFLICT DO NOTHING`,
+          [boss]
+        ).then(() =>
+          db.query(
+            `INSERT INTO player_boss_stats (username, boss_name, data, updated_at)
+             VALUES ($1, $2, $3, NOW())
+             ON CONFLICT (username, boss_name)
+             DO UPDATE SET data = EXCLUDED.data, updated_at = EXCLUDED.updated_at`,
+            [username, boss, safeData]
+          )
+        );
+      });
+
+      if (bossUpserts.length) {
+        await Promise.all(bossUpserts);
+      }
       res.json({ ok: true });
     } catch (err) {
       console.error('Failed to persist stats', err);
