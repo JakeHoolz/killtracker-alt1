@@ -353,8 +353,14 @@ function updatePlayerStatus(text, tone = "info") {
   statusEl.style.color = tone === "error" ? "#ff9a9a" : "#9cd67d";
 }
 
+const API_BASE_URL =
+  window.KILLTRACKER_API_BASE ||
+  document.querySelector('meta[name="killtracker-api"]')?.content ||
+  `${window.location.origin}/api/`;
+
 function buildApiUrl(path) {
-  return new URL(`./api/${path.replace(/^\//, "")}`, window.location.href);
+  const normalized = path.replace(/^\//, "");
+  return new URL(normalized, API_BASE_URL);
 }
 
 async function loadStatsFromServer(username) {
