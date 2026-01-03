@@ -17,6 +17,31 @@ const db = new Pool({
 app.use(express.json({ limit: '1mb' }));
 app.use(express.static(ROOT_DIR, { extensions: ['html'] }));
 
+app.use('/api', (req, res, next) => {
+  const startTime = Date.now();
+  // eslint-disable-next-line no-console
+  console.log('[API Debug] Incoming request', {
+    method: req.method,
+    url: req.originalUrl,
+    params: req.params,
+    query: req.query,
+    body: req.body,
+  });
+
+  res.on('finish', () => {
+    const durationMs = Date.now() - startTime;
+    // eslint-disable-next-line no-console
+    console.log('[API Debug] Response sent', {
+      method: req.method,
+      url: req.originalUrl,
+      status: res.statusCode,
+      durationMs,
+    });
+  });
+
+  next();
+});
+
 async function ensureTable() {
   await db.query(`
     CREATE TABLE IF NOT EXISTS player_stats (
